@@ -188,6 +188,26 @@ export default function EnvironmentalPortfolioEnhanced() {
       tags: ["Bioremediation", "Acid Mine Drainage", "Geomicrobiology", "ICP-OES", "Hydrocarbon Degradation", "Environmental Geochemistry"],
       glowColor: "green"
     }
+    ,
+    {
+      id: 10,
+      title: "Quaternary Glacial Geology Field Guide – Waterloo & Cambridge Region",
+      icon: <Globe className="w-8 h-8 text-sky-600" />,
+      brief: "Field guide and analysis of Catfish Creek Till, Waterloo Moraine, Conestogo Lake, and Paris–Galt Moraine with mapped stops and stratigraphy",
+      detailed: "Compiled a multi-part field trip guidebook investigating Quaternary glacial and post-glacial environments across the Waterloo and Cambridge region. Documented key stops including Grand River erosional banks (Catfish Creek Till), Conestogo Lake sections (Mornington/Tavistock tills with glaciolacustrine rhythmites), Waterloo Moraine kame deposits (Baden Hill), and the Paris–Galt Moraine (Wentworth Till). Described sedimentology (diamicton fabrics, faceted/striated clasts, carbonate-rich matrices), stratigraphic relationships, and ice-flow indicators (bedrock abrasion/striations; NW azimuth ~321°). Synthesised regional deglaciation context of the Laurentide Ice Sheet lobes, linking landforms to process history and human implications for aquifer resources.",
+      tags: [
+        "Quaternary Geology",
+        "Glacial Geology",
+        "Catfish Creek Till",
+        "Waterloo Moraine",
+        "Conestogo Lake",
+        "Paris–Galt Moraine",
+        "Stratigraphy",
+        "Sedimentology",
+        "Field Mapping"
+      ],
+      glowColor: "sky"
+    }
   ];
 
   return (
@@ -244,7 +264,7 @@ export default function EnvironmentalPortfolioEnhanced() {
           {/* Stats Bar - Visual Interest */}
           <div className="flex flex-wrap justify-center gap-8 mb-12 fade-in">
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-1">3+</div>
+              <div className="text-4xl font-bold text-green-600 mb-1">2+</div>
               <div className="text-sm text-gray-600 uppercase tracking-wide">Years Experience</div>
             </div>
             <div className="w-px h-16 bg-gray-300"></div>
@@ -272,8 +292,9 @@ export default function EnvironmentalPortfolioEnhanced() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 bg-white/40 backdrop-blur-sm">
-        <div className="max-w-4xl mx-auto">
+      <section id="about" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 bg-white/40 backdrop-blur-sm relative overflow-hidden">
+        <FloatingParticles particleCount={40} interactive={true} theme="environmental" />
+        <div className="max-w-4xl mx-auto relative z-10">
           <h2 className="text-4xl font-bold text-gradient-primary mb-8 text-center">About Me</h2>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <GlowingCard glowColor="green" className="h-full">
@@ -300,8 +321,9 @@ export default function EnvironmentalPortfolioEnhanced() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 overflow-y-auto">
-        <div className="max-w-6xl mx-auto">
+      <section id="projects" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 overflow-y-auto relative">
+        <FloatingParticles particleCount={40} interactive={true} theme="environmental" />
+        <div className="max-w-6xl mx-auto relative z-10">
           <h2 className="text-4xl font-bold text-gradient-primary mb-12 text-center">My Projects</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
@@ -337,8 +359,9 @@ export default function EnvironmentalPortfolioEnhanced() {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 bg-white/40 backdrop-blur-sm overflow-y-auto">
-        <div className="max-w-6xl mx-auto">
+      <section id="experience" className="min-h-screen snap-start snap-always flex items-center justify-center px-4 py-20 bg-white/40 backdrop-blur-sm overflow-y-auto relative overflow-hidden">
+        <FloatingParticles particleCount={40} interactive={true} theme="environmental" />
+        <div className="max-w-6xl mx-auto relative z-10">
           <h2 className="text-4xl font-bold text-gradient-primary mb-12 text-center">Work Experience</h2>
           <div className="space-y-6">
             {experiences.map((exp) => (
@@ -399,7 +422,7 @@ export default function EnvironmentalPortfolioEnhanced() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Main Contact Card */}
-            <GlowingCard glowColor="blue" className="md:col-span-2">
+            <div className="md:col-span-2 bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-gray-200/50">
               <div className="p-8 md:p-12">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   {/* Left: Message */}
@@ -442,60 +465,62 @@ export default function EnvironmentalPortfolioEnhanced() {
                   </div>
                 </div>
               </div>
-            </GlowingCard>
+            </div>
 
             {/* Skills Summary Card */}
-            <GlowingCard glowColor="green">
+            <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-gray-200/50">
               <div className="p-6">
-                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Leaf className="w-6 h-6 text-green-600" />
+                <h4 className="text-xl font-bold text-gray-800 mb-4">
                   Core Expertise
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                     <div>
-                      <div className="font-semibold text-gray-700">Environmental Compliance</div>
-                      <div className="text-sm text-gray-600">CLIECA, ESA, Water Quality Standards</div>
+                      <div className="font-semibold text-gray-700">GIS & Remote Sensing</div>
+                      <div className="text-sm text-gray-600">ArcGIS Pro, QGIS, Spatial Analysis, Geospatial Database Design</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                     <div>
-                      <div className="font-semibold text-gray-700">Geospatial Analysis</div>
-                      <div className="text-sm text-gray-600">ArcGIS, QGIS, Remote Sensing</div>
+                      <div className="font-semibold text-gray-700">Hydrogeology & Modeling</div>
+                      <div className="text-sm text-gray-600">MODFLOW, Groundwater Modeling, Python (Pastas), AutoCAD, R-studio, SQL</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
                     <div>
-                      <div className="font-semibold text-gray-700">Data Science</div>
-                      <div className="text-sm text-gray-600">Python, R Studio, Time Series Analysis</div>
+                      <div className="font-semibold text-gray-700">Labs & Projects</div>
+                      <div className="text-sm text-gray-600">ICP-MS, ICP-OES, RL Microscopy, Economic Feasibility Assessment, Statistical Analysis, QA/QC</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-700">Environmental Assessment</div>
+                      <div className="text-sm text-gray-600">Phase I/II ESA, Water Quality, Environmental Compliance, EIA, Field Sampling</div>
                     </div>
                   </div>
                 </div>
               </div>
-            </GlowingCard>
+            </div>
 
             {/* Location & Availability Card */}
-            <GlowingCard glowColor="cyan">
+            <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-gray-200/50">
               <div className="p-6">
-                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Globe className="w-6 h-6 text-cyan-600" />
+                <h4 className="text-xl font-bold text-gray-800 mb-4">
                   Availability
                 </h4>
                 <div className="space-y-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Location</div>
                     <div className="font-semibold text-gray-700 text-lg">Waterloo, Ontario</div>
+                    <div className="text-sm text-gray-600 mt-1">Willing to relocate</div>
                   </div>
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Graduation</div>
                     <div className="font-semibold text-gray-700 text-lg">August 2025</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Work Authorization</div>
-                    <div className="font-semibold text-gray-700 text-lg">Post Graduation Work PermitIOU</div>
                   </div>
                   <div className="pt-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
@@ -505,13 +530,13 @@ export default function EnvironmentalPortfolioEnhanced() {
                   </div>
                 </div>
               </div>
-            </GlowingCard>
+            </div>
           </div>
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-green-100">
-              <div className="text-3xl font-bold text-green-600 mb-1">3+</div>
+              <div className="text-3xl font-bold text-green-600 mb-1">5+</div>
               <div className="text-sm text-gray-600">Co-op Terms</div>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-blue-100">

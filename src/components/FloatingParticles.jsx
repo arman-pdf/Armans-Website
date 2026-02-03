@@ -61,7 +61,7 @@ const FloatingParticles = ({
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = -50;
-        this.size = Math.random() * 20 + 15; // Much larger: 15-35px
+        this.size = Math.random() * 25 + 25; // Larger and more uniform: 25-50px
         this.speedY = Math.random() * 0.3 + 0.15;
         this.speedX = Math.random() * 0.4 - 0.2;
         this.opacity = Math.random() * 0.4 + 0.5; // More visible: 0.5-0.9

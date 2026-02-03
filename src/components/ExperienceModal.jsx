@@ -163,7 +163,7 @@ const ExperienceModal = ({ experience, isOpen, onClose }) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
         }

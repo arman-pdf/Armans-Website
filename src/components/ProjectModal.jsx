@@ -153,7 +153,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
         }

@@ -110,7 +110,7 @@ const GlowingCard = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes gradient-rotate {
           0% {
             background-position: 0% 50%;

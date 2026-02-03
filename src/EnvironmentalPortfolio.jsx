@@ -246,7 +246,7 @@ Throughout all five labs, developed comprehensive proficiency in macroscopic min
           <Building2 className="absolute text-gray-300 w-8 h-8 animate-pulse-slow" style={{ top: '50%', right: '8%', animationDelay: '2.2s' }} />
         </div>
         
-        <style jsx>{`
+        <style>{`
           @keyframes float {
             0%, 100% {
               transform: translateY(0px) translateX(0px) rotate(0deg);
@@ -261,7 +261,7 @@ Throughout all five labs, developed comprehensive proficiency in macroscopic min
               transform: translateY(-20px) translateX(-10px) rotate(3deg);
             }
           }
-          
+
           @keyframes drift {
             0%, 100% {
               transform: translateX(0px) translateY(0px) rotate(0deg);
@@ -276,7 +276,7 @@ Throughout all five labs, developed comprehensive proficiency in macroscopic min
               transform: translateX(-20px) translateY(5px) rotate(5deg);
             }
           }
-          
+
           @keyframes pulse-slow {
             0%, 100% {
               opacity: 0.3;
@@ -287,15 +287,15 @@ Throughout all five labs, developed comprehensive proficiency in macroscopic min
               transform: scale(1.1);
             }
           }
-          
+
           .animate-float {
             animation: float 4s ease-in-out infinite;
           }
-          
+
           .animate-drift {
             animation: drift 5s ease-in-out infinite;
           }
-          
+
           .animate-pulse-slow {
             animation: pulse-slow 3s ease-in-out infinite;
           }
