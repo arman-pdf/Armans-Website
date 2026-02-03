@@ -17,16 +17,30 @@ import { MessageCircle, X, Send } from 'lucide-react';
 const FloatingChatButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
 
-    // Show success message and close popup
-    alert('Message sent successfully! I will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
-    setIsOpen(false);
+    try {
+      // TODO: Replace YOUR_FORM_ID with your Formspree form ID (get it from formspree.io)
+      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert('Message sent successfully! I will get back to you soon.');
+        setFormData({ name: '', email: '', message: '' });
+        setIsOpen(false);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -123,10 +137,15 @@ const FloatingChatButton = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <Send className="w-4 h-4" />
-                Send Message
+                {isSubmitting ? 'Sending...' : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Send Message
+                  </>
+                )}
               </button>
             </form>
           </div>

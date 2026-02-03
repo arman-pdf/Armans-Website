@@ -1,127 +1,96 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 /**
  * GlassNavigation Component
- *
- * Purpose: Modern glassmorphism navigation bar with blur effect and smooth transitions
- * Placement: Replaces existing navigation bar
- * Performance: CSS backdrop-filter with GPU acceleration
- *
- * Features:
- * - Glassmorphism effect (frosted glass)
- * - Smooth scroll-based opacity changes
- * - Active link highlighting with glow
- * - Mobile-responsive
- * - Smooth animations
- *
- * Props:
- * - logo: string or component
- * - links: array of {href, label}
  */
-const GlassNavigation = ({ logo = "Arman Kanorwalla", links = [] }) => {
+const GlassNavigation = ({ logo = "Arman Kanorwalla", links = [], activeSection = null }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Listen to scroll on the snap-y container instead of window
-    const scrollContainer = document.querySelector('.snap-y');
-
     const handleScroll = () => {
-      if (scrollContainer) {
-        setScrolled(scrollContainer.scrollTop > 50);
-
-        // Update active section based on scroll position in the container
-        const scrollPosition = scrollContainer.scrollTop + window.innerHeight / 2;
-        const sections = links.map(link => link.href.replace('#', ''));
-
-        for (let i = sections.length - 1; i >= 0; i--) {
-          const section = document.getElementById(sections[i]);
-          if (section) {
-            const sectionTop = section.offsetTop;
-            const sectionBottom = sectionTop + section.offsetHeight;
-
-            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-              setActiveSection(sections[i]);
-              break;
-            }
-          }
-        }
-      }
+      setScrolled(window.scrollY > 50);
     };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
-      handleScroll(); // Initial call
-      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  const handleClick = (e, link) => {
+    if (link.scrollTo) {
+      e.preventDefault();
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          document.getElementById(link.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        document.getElementById(link.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  }, [links]);
+  };
+
+  const isActiveLink = (link) => {
+    if (link.scrollTo && location.pathname === '/') {
+      return activeSection === link.scrollTo;
+    }
+    return location.pathname === link.href;
+  };
+
+  const linkBaseStyles = "px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium font-body";
+  const linkActiveStyles = "text-green-700 bg-green-50";
+  const linkInactiveStyles = "text-gray-600 hover:text-green-700 hover:bg-green-50/50";
 
   return (
-    <>
-      <nav
-        className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-white/60 backdrop-blur-xl border-b border-green-100/30'
-            : 'bg-white/40 backdrop-blur-md border-b border-white/10'
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          {/* Logo with glow effect */}
-          <div className="relative group">
-            <div className="absolute -inset-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg blur opacity-0 group-hover:opacity-30 transition duration-500" />
-            <a
-              href="#home"
-              className="relative text-2xl font-bold bg-gradient-to-r from-green-700 via-blue-600 to-emerald-600 bg-clip-text text-transparent transition-all duration-300 hover:scale-105"
-            >
-              {logo}
-            </a>
-          </div>
+    <nav
+      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/90 backdrop-blur-xl shadow-sm'
+          : 'bg-white/60 backdrop-blur-md'
+      }`}
+    >
+      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Logo */}
+        <NavLink
+          to="/"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="text-xl font-bold text-gray-900 hover:text-green-700 transition-colors"
+        >
+          {logo}
+        </NavLink>
 
-          {/* Navigation Links */}
-          <div className="flex gap-6">
-            {links.map((link) => {
-              const isActive = activeSection === link.href.replace('#', '');
+        {/* Navigation Links */}
+        <div className="flex items-center gap-1">
+          {links.map((link) => {
+            const active = isActiveLink(link);
+
+            if (link.scrollTo) {
               return (
-                <div key={link.href} className="relative">
-                  {/* Active link glow */}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg blur-sm opacity-50 animate-pulse" />
-                  )}
-
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const targetId = link.href.replace('#', '');
-                      const targetSection = document.getElementById(targetId);
-                      const scrollContainer = document.querySelector('.snap-y');
-
-                      if (targetSection && scrollContainer) {
-                        scrollContainer.scrollTo({
-                          top: targetSection.offsetTop,
-                          behavior: 'smooth'
-                        });
-                        setActiveSection(targetId);
-                      }
-                    }}
-                    className={`relative px-3 py-1 rounded-lg transition-all duration-300 cursor-pointer ${
-                      isActive
-                        ? 'text-green-700 font-semibold bg-white/60'
-                        : 'text-gray-700 hover:text-green-600 hover:bg-white/40'
-                    }`}
-                  >
-                    {link.label}
-                  </a>
-                </div>
+                <button
+                  key={link.href}
+                  onClick={(e) => handleClick(e, link)}
+                  className={`${linkBaseStyles} ${active ? linkActiveStyles : linkInactiveStyles}`}
+                >
+                  {link.label}
+                </button>
               );
-            })}
-          </div>
-        </div>
-      </nav>
+            }
 
-      {/* Spacer to prevent content jump */}
-      <div className="h-20" />
-    </>
+            return (
+              <NavLink
+                key={link.href}
+                to={link.href}
+                className={`${linkBaseStyles} ${active ? linkActiveStyles : linkInactiveStyles}`}
+              >
+                {link.label}
+              </NavLink>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
   );
 };
 

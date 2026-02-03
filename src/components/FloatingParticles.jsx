@@ -30,7 +30,7 @@ const FloatingParticles = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     let animationFrameId;
     let particles = [];
     let mouse = { x: null, y: null, radius: 150 };
