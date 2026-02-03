@@ -122,40 +122,43 @@ export default function ProjectsPage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <GlowingCard key={project.id} glowColor={project.glowColor} className="flex flex-col">
-              <div className="p-6 flex flex-col h-full">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="flex-shrink-0 mt-0.5">
-                    {project.icon}
+            <div
+              key={project.id}
+              onClick={() => setSelectedProject(project)}
+              className="cursor-pointer transform transition-transform duration-200 hover:scale-[1.02]"
+            >
+              <GlowingCard glowColor={project.glowColor} className="flex flex-col h-full">
+                <div className="p-6 flex flex-col h-full min-h-[280px]">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      {project.icon}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 leading-tight">{project.title}</h3>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 leading-tight">{project.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4 font-body leading-relaxed flex-grow line-clamp-3">{project.brief}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-4 mt-auto">
+                    {project.tags.slice(0, 3).map((tag, idx) => {
+                      const tagColors = {
+                        green: 'bg-green-50 text-green-700',
+                        blue: 'bg-blue-50 text-blue-700',
+                        cyan: 'bg-cyan-50 text-cyan-700',
+                        orange: 'bg-orange-50 text-orange-700',
+                        purple: 'bg-purple-50 text-purple-700'
+                      };
+                      const colorClass = tagColors[project.glowColor] || 'bg-gray-100 text-gray-600';
+                      return (
+                        <span key={idx} className={`text-xs px-2 py-1 rounded font-body ${colorClass}`}>
+                          {tag}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <span className="text-green-700 font-medium text-sm flex items-center gap-1 font-body">
+                    Read more →
+                  </span>
                 </div>
-                <p className="text-gray-600 text-sm mb-4 font-body leading-relaxed flex-grow">{project.brief}</p>
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {project.tags.slice(0, 3).map((tag, idx) => {
-                    const tagColors = {
-                      green: 'bg-green-50 text-green-700',
-                      blue: 'bg-blue-50 text-blue-700',
-                      cyan: 'bg-cyan-50 text-cyan-700',
-                      orange: 'bg-orange-50 text-orange-700',
-                      purple: 'bg-purple-50 text-purple-700'
-                    };
-                    const colorClass = tagColors[project.glowColor] || 'bg-gray-100 text-gray-600';
-                    return (
-                      <span key={idx} className={`text-xs px-2 py-1 rounded font-body ${colorClass}`}>
-                        {tag}
-                      </span>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={() => setSelectedProject(project)}
-                  className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 transition-colors font-body"
-                >
-                  Read more →
-                </button>
-              </div>
-            </GlowingCard>
+              </GlowingCard>
+            </div>
           ))}
         </div>
 
