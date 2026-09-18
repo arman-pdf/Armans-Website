@@ -39,7 +39,7 @@ export default function Layout() {
       <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-8 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-blue-600/10" />
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <p className="font-body">&copy; 2025 Arman Kanorwalla. All rights reserved.</p>
+          <p className="font-body">&copy; {new Date().getFullYear()} Arman Kanorwalla. All rights reserved.</p>
         </div>
       </footer>
 

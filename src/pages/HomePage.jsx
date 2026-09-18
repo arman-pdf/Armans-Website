@@ -4,6 +4,7 @@ import { ChevronDown, Mail, Linkedin, MapPin, Calendar } from 'lucide-react';
 import FloatingParticles from '../components/FloatingParticles';
 import GlowingCard from '../components/GlowingCard';
 import ContactForm from '../components/ContactForm';
+import { CONTACT_EMAIL } from '../config';
 
 export default function HomePage() {
   const { setActiveSection: onSectionChange } = useOutletContext() || {};
@@ -77,24 +78,25 @@ export default function HomePage() {
 
           {/* Tagline */}
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 font-body leading-relaxed">
-            Bridging <span className="text-green-600 font-semibold">environmental compliance</span>,
-            <span className="text-blue-600 font-semibold"> geospatial analysis</span>, and
-            <span className="text-emerald-600 font-semibold"> sustainable solutions</span> to protect our planet's resources
+            Environmental scientist specialising in <span className="text-green-600 font-semibold">groundwater monitoring</span>,
+            <span className="text-blue-600 font-semibold"> GIS & geospatial analysis</span>,
+            <span className="text-emerald-600 font-semibold"> environmental compliance</span>, and
+            <span className="text-purple-600 font-semibold"> ESG</span> - turning field data into decisions that protect water and land.
           </p>
 
           {/* Stats Bar */}
           <div className="flex flex-wrap justify-center gap-10 mb-12">
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-1">2+</div>
-              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Years Experience</div>
+              <div className="text-4xl font-bold text-green-600 mb-1">5</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Co-op Terms</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-1">10+</div>
-              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Projects</div>
+              <div className="text-4xl font-bold text-blue-600 mb-1">22</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Groundwater Wells Databased</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-600 mb-1">100%</div>
-              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Committed</div>
+              <div className="text-4xl font-bold text-emerald-600 mb-1">150+</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Monitoring Sites Mapped</div>
             </div>
           </div>
 
@@ -155,7 +157,7 @@ export default function HomePage() {
             {/* Bio */}
             <div className="space-y-5 font-body">
               <p className="text-gray-700 leading-relaxed">
-                I'm graduating in August 2025 from the University of Waterloo with a Bachelor of Science, Honours Environmental Science, Specialising in Geoscience.
+                I'm a University of Waterloo graduate with a Bachelor of Science, Honours Environmental Science, Specialising in Geoscience (degree conferred October 2025).
               </p>
               <p className="text-gray-700 leading-relaxed">
                 Through my professional experiences at the City of Kitchener and City of Toronto, I've developed strong technical skills in environmental compliance, geospatial analysis, and groundwater monitoring.
@@ -273,7 +275,7 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Direct Contact</h3>
                   <div className="space-y-4">
                     <a
-                      href="mailto:azkanorw@uwaterloo.ca"
+                      href={`mailto:${CONTACT_EMAIL}`}
                       className="flex items-center gap-3 text-gray-700 hover:text-green-700 transition-colors group"
                     >
                       <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center group-hover:bg-green-100 transition-colors">
@@ -281,7 +283,7 @@ export default function HomePage() {
                       </div>
                       <div className="font-body">
                         <div className="font-medium">Email</div>
-                        <div className="text-sm text-gray-500">azkanorw@uwaterloo.ca</div>
+                        <div className="text-sm text-gray-500">{CONTACT_EMAIL}</div>
                       </div>
                     </a>
                     <a
@@ -316,7 +318,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-3">
                       <Calendar className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="font-medium text-gray-700">Graduating August 2025</div>
+                        <div className="font-medium text-gray-700">BSc Environmental Science, University of Waterloo (2025)</div>
                         <div className="text-sm text-gray-500">Open to opportunities</div>
                       </div>
                     </div>
