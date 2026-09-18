@@ -1,54 +1,9 @@
 import React, { useState } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X } from 'lucide-react';
+import ContactForm from './ContactForm';
 
-/**
- * FloatingChatButton Component
- *
- * Purpose: Fixed floating chat button with popup message form
- * Placement: Bottom right corner of the page, always visible
- *
- * Features:
- * - Floating action button with chat icon
- * - Animated popup form on click
- * - Glassmorphism design
- * - Form with name, email, and message fields
- * - Smooth open/close animations
- */
 const FloatingChatButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // TODO: Replace YOUR_FORM_ID with your Formspree form ID (get it from formspree.io)
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        alert('Message sent successfully! I will get back to you soon.');
-        setFormData({ name: '', email: '', message: '' });
-        setIsOpen(false);
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   return (
     <>
@@ -82,72 +37,9 @@ const FloatingChatButton = () => {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {/* Name Input */}
-              <div>
-                <label htmlFor="chat-name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="chat-name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="Your name"
-                />
-              </div>
-
-              {/* Email Input */}
-              <div>
-                <label htmlFor="chat-email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="chat-email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              {/* Message Textarea */}
-              <div>
-                <label htmlFor="chat-message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Message
-                </label>
-                <textarea
-                  id="chat-message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows="4"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 resize-none bg-white/50 backdrop-blur-sm"
-                  placeholder="Your message..."
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {isSubmitting ? 'Sending...' : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    Send Message
-                  </>
-                )}
-              </button>
-            </form>
+            <div className="p-6">
+              <ContactForm compact />
+            </div>
           </div>
         </div>
       )}

@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { ChevronDown, Mail, Linkedin, Send, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { ChevronDown, Mail, Linkedin, MapPin, Calendar } from 'lucide-react';
 import FloatingParticles from '../components/FloatingParticles';
 import GlowingCard from '../components/GlowingCard';
+import ContactForm from '../components/ContactForm';
 
 export default function HomePage() {
   const { setActiveSection: onSectionChange } = useOutletContext() || {};
   const [activeSection, setActiveSection] = useState('home');
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const homeRef = useRef(null);
   const aboutRef = useRef(null);
@@ -47,26 +45,6 @@ export default function HomePage() {
   const scrollToSection = (sectionId) => {
     const refs = { home: homeRef, about: aboutRef, contact: contactRef };
     refs[sectionId]?.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        setIsSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
@@ -284,65 +262,7 @@ export default function HomePage() {
             {/* Contact Form */}
             <GlowingCard glowColor="green">
               <div className="p-8">
-                {isSubmitted ? (
-                  <div className="text-center py-12">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent!</h3>
-                    <p className="text-gray-600 font-body">Thank you for reaching out. I'll get back to you soon.</p>
-                    <button
-                      onClick={() => setIsSubmitted(false)}
-                      className="mt-6 text-green-700 hover:text-green-800 font-medium font-body"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5 font-body">Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all font-body"
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5 font-body">Email</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all font-body"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5 font-body">Message</label>
-                      <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        required
-                        rows="4"
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none font-body"
-                        placeholder="Tell me about your project..."
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-gray-900 text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {isSubmitting ? 'Sending...' : <><Send className="w-4 h-4" /> Send Message</>}
-                    </button>
-                  </form>
-                )}
+                <ContactForm />
               </div>
             </GlowingCard>
 
