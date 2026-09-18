@@ -39,7 +39,7 @@ const GlassNavigation = ({ logo = "Arman Kanorwalla", links = [], activeSection 
     return location.pathname === link.href;
   };
 
-  const linkBaseStyles = "px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium font-body";
+  const linkBaseStyles = "px-4 py-2 rounded-lg transition-all duration-200 text-sm font-semibold font-display tracking-wide";
   const linkActiveStyles = "text-green-700 bg-green-50";
   const linkInactiveStyles = "text-gray-600 hover:text-green-700 hover:bg-green-50/50";
 
@@ -56,7 +56,7 @@ const GlassNavigation = ({ logo = "Arman Kanorwalla", links = [], activeSection 
         <NavLink
           to="/"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="text-xl font-bold text-gray-900 hover:text-green-700 transition-colors"
+          className="text-xl font-bold text-gray-900 hover:text-green-700 transition-colors font-display tracking-tight"
         >
           {logo}
         </NavLink>
