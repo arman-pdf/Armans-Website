@@ -81,7 +81,7 @@ export default function HomePage() {
             Environmental scientist specialising in <span className="text-green-600 font-semibold">groundwater monitoring</span>,
             <span className="text-blue-600 font-semibold"> GIS & geospatial analysis</span>,
             <span className="text-emerald-600 font-semibold"> environmental compliance</span>, and
-            <span className="text-purple-600 font-semibold"> ESG</span> - turning field data into decisions that protect water and land.
+            <span className="text-purple-600 font-semibold"> ESG</span>.
           </p>
 
           {/* Stats Bar */}
@@ -91,12 +91,12 @@ export default function HomePage() {
               <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Co-op Terms</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-1">22</div>
-              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Groundwater Wells Databased</div>
+              <div className="text-4xl font-bold text-blue-600 mb-1">10</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Projects Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-600 mb-1">150+</div>
-              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Monitoring Sites Mapped</div>
+              <div className="text-4xl font-bold text-emerald-600 mb-1">2+</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wide font-body">Years Experience</div>
             </div>
           </div>
 

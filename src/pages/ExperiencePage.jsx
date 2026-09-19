@@ -112,34 +112,37 @@ export default function ExperiencePage() {
               };
               const iconBg = iconBgColors[exp.glowColor] || 'bg-gray-100';
               return (
-              <GlowingCard key={exp.id} glowColor={exp.glowColor}>
-                <div className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className={`flex-shrink-0 w-12 h-12 ${iconBg} rounded-lg flex items-center justify-center`}>
-                      {exp.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">{exp.role}</h3>
-                          <p className="text-gray-600 font-body">{exp.company}</p>
-                        </div>
-                        <div className="text-right text-sm text-gray-500 font-body">
-                          <p>{exp.period}</p>
-                          <p>{exp.location}</p>
-                        </div>
+              <div
+                key={exp.id}
+                onClick={() => setSelectedExperience(exp)}
+                className="cursor-pointer transform transition-transform duration-200 hover:scale-[1.02]"
+              >
+                <GlowingCard glowColor={exp.glowColor}>
+                  <div className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className={`flex-shrink-0 w-12 h-12 ${iconBg} rounded-lg flex items-center justify-center`}>
+                        {exp.icon}
                       </div>
-                      <p className="text-gray-600 text-sm font-body mb-3">{exp.brief}</p>
-                      <button
-                        onClick={() => setSelectedExperience(exp)}
-                        className="text-green-700 hover:text-green-800 font-medium text-sm transition-colors font-body"
-                      >
-                        Read more →
-                      </button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-900">{exp.role}</h3>
+                            <p className="text-gray-600 font-body">{exp.company}</p>
+                          </div>
+                          <div className="text-right text-sm text-gray-500 font-body">
+                            <p>{exp.period}</p>
+                            <p>{exp.location}</p>
+                          </div>
+                        </div>
+                        <p className="text-gray-600 text-sm font-body mb-3">{exp.brief}</p>
+                        <span className="text-green-700 font-medium text-sm font-body">
+                          Read more →
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </GlowingCard>
+                </GlowingCard>
+              </div>
               );
             })}
           </div>
