@@ -1,0 +1,19 @@
+{
+  "name": "Waterloo Moraine",
+  "bbox": {
+    "name": "Waterloo Moraine",
+    "south": 43.38,
+    "north": 43.52,
+    "west": -80.65,
+    "east": -80.45
+  },
+  "cols": 160,
+  "rows": 120,
+  "minElevation": 295,
+  "maxElevation": 425,
+  "centre": {
+    "lat": 43.45,
+    "lon": -80.55
+  },
+  "source": "AWS Terrain Tiles (Mapzen / open data)"
+}

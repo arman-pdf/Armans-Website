@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import TerrainFigure from '../components/TerrainFigure';
 import Section from '../components/Section';
 import Entry, { Details } from '../components/Entry';
 import {
@@ -37,7 +38,7 @@ function Hero() {
           <div id="assistant-slot" />
         </div>
         <div className="lg:col-span-5">
-          <div id="terrain-slot" className="aspect-[5/4] w-full" />
+          <TerrainFigure />
         </div>
       </div>
     </section>
@@ -45,6 +46,13 @@ function Hero() {
 }
 
 export default function Portfolio() {
+  useEffect(() => {
+    let cleanup;
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 300));
+    idle(() => import('../motion/ruleDraw').then((m) => { cleanup = m.default(); }));
+    return () => cleanup?.();
+  }, []);
+
   return (
     <>
       <Hero />
