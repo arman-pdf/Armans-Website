@@ -9,7 +9,6 @@ const caption = `${meta.name.toUpperCase()} · ${fmt(meta.centre.lat, 'N', 'S')}
 
 // 3D only on large screens with a fine pointer and no reduced-motion request.
 const canRun3D = () =>
-  typeof window !== 'undefined' &&
   window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches &&
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -47,7 +46,10 @@ export default function TerrainFigure() {
           </Suspense>
         )}
       </div>
-      <figcaption className="mt-3 font-mono text-[11px] tracking-[0.04em] text-ink-3">{caption}</figcaption>
+      <figcaption className="mt-4 flex items-center gap-2 font-mono text-[11px] tnum tracking-[0.04em] text-paper/70">
+        <span aria-hidden className="inline-block h-2.5 w-2.5 bg-flag [clip-path:polygon(0_0,100%_50%,0_100%)]" />
+        {caption}
+      </figcaption>
     </figure>
   );
 }

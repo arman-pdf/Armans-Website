@@ -87,6 +87,6 @@ for (let l = 0; l < LINES; l++) {
 }
 writeFileSync(
   new URL('terrain.svg', OUT),
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" fill="#FBFAF7" stroke="#1C1B19" stroke-width="0.8" stroke-linejoin="round" stroke-opacity="0.75">${paths}</svg>`
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" fill="#12201A" stroke="#EEE8DA" stroke-width="0.8" stroke-linejoin="round" stroke-opacity="0.85">${paths}</svg>`
 );
 console.log(`${BBOX.name}: ${Math.round(min)}–${Math.round(max)} m, grid ${COLS}x${ROWS}`);

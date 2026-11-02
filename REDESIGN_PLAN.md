@@ -1,3 +1,5 @@
+> **Update (Nov 2026):** the visual direction below was replaced by a "field survey" world: a dark panel with the terrain, a heavy display face (Bricolage Grotesque), survey-orange accent, multiple pages (/work, /projects, /projects/:slug, /about, /contact), a first-visit terrain loader, and an elevation gauge. See PRODUCT.md. Hosting is Netlify; chat is Ollama Cloud; the Cloudflare parts of Phase C are superseded. Sections 1, 3 (performance budget) and 5 (Phase C intent, content issues) still apply.
+
 # Redesign Plan: "Field Report"
 
 A portfolio that reads like a well-typeset technical CV. It has one meaningful visual (a 3D line terrain built from real elevation data) and one meaningful feature (an assistant that answers questions about Arman's work by text or voice). It is quiet, precise and easy to scan in 30 seconds. **Resume content stays word-for-word**; only presentation changes, until Arman supplies the new project picks (Step 8b).

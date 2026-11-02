@@ -1,26 +1,26 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
-import Portfolio from './pages/Portfolio';
-
-// Old /projects and /experience URLs land on the matching section.
-function SectionRedirect({ id }) {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate('/', { replace: true });
-    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
-  }, [id, navigate]);
-  return null;
-}
+import Home from './pages/Home';
+import Work from './pages/Work';
+import Projects from './pages/Projects';
+import ProjectDetail from './pages/ProjectDetail';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Portfolio />} />
-          <Route path="projects" element={<SectionRedirect id="projects" />} />
-          <Route path="experience" element={<SectionRedirect id="experience" />} />
+          <Route index element={<Home />} />
+          <Route path="work" element={<Work />} />
+          <Route path="experience" element={<Navigate to="/work" replace />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="projects/:slug" element={<ProjectDetail />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --paper: #fbfaf7;
-  --ink: #1c1b19;
-  --ink-2: #5c5a55;
-  --ink-3: #8a877f;
-  --rule: #e6e3dc;
-  --accent: #2e5a3c;
+  --paper: #eee8da;
+  --ink: #15201a;
+  --ink-2: #454d44;
+  --ink-3: #5f665c;
+  --rule: #d3ccbb;
+  --deep: #12201a;
+  --deep-2: #1b2d25;
+  --flag: #e8501c; /* survey flagging orange: fills, marks, never small text */
+  --flag-ink: #b93a0e; /* same hue, readable as text on paper */
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--ink-3) var(--paper);
+  scrollbar-width: thin;
 }
 
 body {
@@ -21,16 +26,24 @@ body {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  caret-color: var(--flag);
 }
 
 ::selection {
-  background: var(--accent);
-  color: var(--paper);
+  background: var(--flag);
+  color: var(--deep);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--flag-ink);
+  outline-offset: 3px;
+}
+.on-deep :focus-visible {
+  outline-color: var(--flag);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
 summary {
@@ -41,18 +54,36 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Page enter: one soft rise, only on route change */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 }
-.fade-in {
-  animation: fade-in 0.3s ease both;
+.page-enter {
+  animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* First-visit loader */
+@keyframes loader-reveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes loader-out {
+  to { transform: translateY(-100%); }
+}
+.loader-terrain {
+  clip-path: inset(100% 0 0 0);
+  animation: loader-reveal 1.3s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
+.loader-out {
+  animation: loader-out 0.65s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
-    animation: none !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     transition: none !important;
   }
 }

@@ -7,9 +7,9 @@ import meta from '../assets/terrain.json';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PAPER = 0xfbfaf7;
-const INK = new THREE.Color(0x1c1b19);
-const INK_FAR = new THREE.Color(0xc9c6be);
+const PAPER = 0x12201a; // deep panel colour: clear colour and curtain fill
+const INK = new THREE.Color(0xeee8da);
+const INK_FAR = new THREE.Color(0x34463c);
 const ROW_STEP = 2; // draw every 2nd row of the 160x120 grid
 
 export default function TerrainCanvas({ onReady }) {
