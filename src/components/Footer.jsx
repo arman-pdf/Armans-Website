@@ -26,6 +26,9 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} {profile.name}
           <br />
           Terrain: {meta.name}, {meta.minElevation}–{meta.maxElevation} m. Elevation data from {meta.source}.
+          <br />
+          Optional spoken answers: AI-generated voice, Pocket TTS by Kyutai (CC BY 4.0).{' '}
+          <a className="underline hover:text-flag" href="/tts/NOTICE.txt" target="_blank" rel="noopener noreferrer">Credits</a>
         </p>
       </div>
     </footer>

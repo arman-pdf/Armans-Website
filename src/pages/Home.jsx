@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <section className="on-deep bg-deep text-paper">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-8 py-14 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
+        <div className="mx-auto max-w-[1180px] px-5 md:px-8 py-14 md:py-24 grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-7">
             <h1 className="font-display font-extrabold text-[clamp(3.25rem,10vw,6rem)] leading-[0.92] tracking-[-0.04em]">
               {first}<br />{rest.join(' ')}
@@ -37,7 +37,7 @@ export default function Home() {
             </div>
             <Assistant tone="deep" />
           </div>
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 lg:sticky lg:top-24">
             <TerrainFigure />
           </div>
         </div>

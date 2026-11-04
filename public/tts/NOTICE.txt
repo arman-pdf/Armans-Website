@@ -1,0 +1,32 @@
+CREDITS FOR THE OPTIONAL SPOKEN ANSWERS
+=======================================
+
+The "natural voice" is AI-generated speech. It is not a recording of a person.
+It runs entirely in your browser; your questions and the answers are not sent anywhere by it.
+
+Model
+  Pocket TTS, by Kyutai (Manu Orsini, Simon Rouard, Gabriel De Marmiesse, Vaclav Volhejn,
+  Neil Zeghidour, Alexandre Defossez). https://huggingface.co/kyutai/pocket-tts
+  Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+  https://creativecommons.org/licenses/by/4.0/   (full text: LICENSE-model-CC-BY-4.0.txt)
+
+Voice
+  "Alba", from the recordings of Alba Mackenna, released under CC BY 4.0
+  (https://huggingface.co/kyutai/tts-voices).
+
+ONNX export of the model
+  KevinAHM/pocket-tts-onnx, CC BY 4.0. https://huggingface.co/KevinAHM/pocket-tts-onnx
+  Loaded from a pinned version and checked against its SHA-256 fingerprint when downloaded.
+
+Changes made
+  The model files are 8-bit quantised (int8) by the exporter. This site uses a single voice,
+  skips the voice-cloning component, and runs the model with ONNX Runtime Web in your browser.
+
+Code
+  The in-browser speech pipeline (inference-worker.js, PCMPlayerWorklet.js, EventEmitter.js) is adapted
+  from KevinAHM/pocket-tts-web, Apache License 2.0 (LICENSE-code-APACHE-2.0.txt).
+  sentencepiece.js: SentencePiece for JavaScript, Apache 2.0.
+  ONNX Runtime Web 1.20.0 (self-hosted in /tts/ort), MIT licence (ort/LICENSE-onnxruntime-MIT.txt).
+
+Use of this voice must follow Kyutai's terms: no voice impersonation or cloning without consent, and
+no presenting generated speech as a genuine recording of a real person.
