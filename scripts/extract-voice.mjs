@@ -1,5 +1,5 @@
-// Extract ONE voice from Kyutai's multi-voice voices.bin ("PTVB1" container) so visitors
-// download ~3 MB instead of ~52 MB. Usage: node scripts/extract-voice.mjs <in> <out> <voiceName>
+// Extract a few voices from Kyutai's multi-voice voices.bin ("PTVB1" container) so visitors
+// download ~6 MB per voice instead of ~52 MB. Usage: node scripts/extract-voice.mjs <in> <out> <voice,voice,...>
 import { readFileSync, writeFileSync } from 'node:fs';
 const [, , inFile, outFile, want] = process.argv;
 const buf = readFileSync(inFile);
@@ -21,9 +21,13 @@ for (let v = 0; v < count; v++) {
   }
   found.push({ name, start, end: o });
 }
-const pick = found.find((f) => f.name === want);
-if (!pick) throw new Error(`voice "${want}" not found; have: ${found.map((f) => f.name).join(', ')}`);
-const head = Buffer.alloc(9); head.write('PTVB1', 0); head.writeUInt32LE(1, 5);
-writeFileSync(outFile, Buffer.concat([head, buf.subarray(pick.start, pick.end)]));
+const names = want.split(',');
+const picks = names.map((n) => {
+  const f = found.find((x) => x.name === n);
+  if (!f) throw new Error(`voice "${n}" not found; have: ${found.map((x) => x.name).join(', ')}`);
+  return f;
+});
+const head = Buffer.alloc(9); head.write('PTVB1', 0); head.writeUInt32LE(picks.length, 5);
+writeFileSync(outFile, Buffer.concat([head, ...picks.map((f) => buf.subarray(f.start, f.end))]));
 console.log(`voices: ${found.map((f) => `${f.name} (${((f.end - f.start) / 1e6).toFixed(1)} MB)`).join(', ')}`);
-console.log(`wrote ${outFile}: ${want}, ${((9 + pick.end - pick.start) / 1e6).toFixed(1)} MB`);
+console.log(`wrote ${outFile}: ${want}, ${((9 + picks.reduce((n, f) => n + f.end - f.start, 0)) / 1e6).toFixed(1)} MB`);

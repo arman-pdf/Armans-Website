@@ -6,7 +6,11 @@
 const FADE = 480;
 const SLOW_BELOW = 0.95; // speech slower than real time stutters: fall back
 const SLOW_AFTER_CHUNKS = 4;
-const VOICE_NAME = 'alba';
+export const VOICES = [
+  { id: 'marius', label: 'Voice 1' },
+  { id: 'javert', label: 'Voice 2' },
+];
+const DEFAULT_VOICE = 'marius';
 // Built at runtime so Vite leaves these self-hosted /public files alone.
 const asset = (path) => new URL(path, window.location.origin).href;
 
@@ -29,16 +33,26 @@ export function voiceSupport() {
   };
 }
 
-// Make an answer pleasant to hear: no URLs, no markup.
+// Make an answer pleasant to hear: no URLs, no markup, no symbols a speech engine reads badly.
 export function speakable(text, projects = []) {
   const titleOf = (slug) => projects.find((p) => p.slug === slug)?.title;
   return text
     .replace(/\(\s*see\s+\/projects\/[a-z0-9-]+\s*\)/gi, '')
     .replace(/\bsee\s+\/projects\/[a-z0-9-]+/gi, '')
     .replace(/\/projects\/([a-z0-9-]+)/g, (_, slug) => titleOf(slug) ?? 'the project page')
-    .replace(/\/work\b/g, 'the Experience page')
+    .replace(/\/work\b/g, 'the experience page')
+    .replace(/[\u2010-\u2015]/g, '-') // fancy hyphens and dashes
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[≈~]/g, 'about ')
+    .replace(/%/g, ' percent')
+    .replace(/\s*&\s*/g, ' and ')
+    .replace(/\s*\(\s*/g, ', ') // asides read better as commas
+    .replace(/\s*\)\s*/g, ', ')
     .replace(/[*_`#>]/g, '')
     .replace(/^\s*[-•]\s+/gm, '')
+    .replace(/\s+,/g, ',')
+    .replace(/,\s*([.!?])/g, '$1')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -46,7 +60,19 @@ export function speakable(text, projects = []) {
 /* ------------------------------ built-in voice ------------------------------ */
 
 export class BrowserVoice {
+  constructor() {
+    this._pulse = 0;
+    this._speaking = false;
+  }
+
+  // There is no audio to measure for the built-in voice, so word boundaries drive a soft pulse.
+  getLevel() {
+    this._pulse *= 0.9;
+    return this._speaking ? Math.min(1, 0.18 + this._pulse * 0.6) : 0;
+  }
+
   stop() {
+    this._speaking = false;
     window.speechSynthesis?.cancel();
   }
 
@@ -59,7 +85,9 @@ export class BrowserVoice {
       const voices = synth.getVoices();
       u.voice = voices.find((v) => /^en[-_]/i.test(v.lang) && v.localService) || voices.find((v) => /^en/i.test(v.lang)) || null;
       u.lang = u.voice?.lang || 'en-US';
-      u.onend = u.onerror = () => resolve();
+      u.onboundary = () => { this._pulse = 1; };
+      u.onend = u.onerror = () => { this._speaking = false; resolve(); };
+      this._speaking = true;
       synth.speak(u);
     });
   }
@@ -82,6 +110,34 @@ export class HighQualityVoice {
     this._done = null;
     this._rtf = [];
     this._speaking = false;
+    this.voice = DEFAULT_VOICE;
+    this._buf = null;
+  }
+
+  // Loudness of what is playing right now, 0..1 (for the visuals).
+  getLevel() {
+    const an = this.player?.analyser;
+    if (!an || !this._speaking) return 0;
+    this._buf ??= new Uint8Array(an.fftSize);
+    an.getByteTimeDomainData(this._buf);
+    let sum = 0;
+    for (let i = 0; i < this._buf.length; i++) { const v = (this._buf[i] - 128) / 128; sum += v * v; }
+    return Math.min(1, Math.sqrt(sum / this._buf.length) * 4);
+  }
+
+  // Switch between the shipped voices. Safe to call before or after load.
+  async setVoice(id) {
+    if (!VOICES.some((v) => v.id === id) || id === this.voice) return;
+    this.voice = id;
+    if (!this.ready) return;
+    await new Promise((resolve) => {
+      const prev = this.worker.onmessage;
+      this.worker.onmessage = (e) => {
+        if (e.data.type === 'voice_set' || e.data.type === 'error') { this.worker.onmessage = prev; resolve(); }
+        else prev(e);
+      };
+      this.worker.postMessage({ type: 'set_voice', data: { voiceName: id } });
+    });
   }
 
   // Must be called from a click or keypress (browsers block audio otherwise).
@@ -161,7 +217,7 @@ export class HighQualityVoice {
     this._speaking = true;
     return new Promise((resolve) => {
       this._done = resolve;
-      this.unlock().then(() => this.worker.postMessage({ type: 'generate', data: { text, voice: VOICE_NAME } }));
+      this.unlock().then(() => this.worker.postMessage({ type: 'generate', data: { text, voice: this.voice } }));
     });
   }
 

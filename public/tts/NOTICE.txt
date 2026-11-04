@@ -10,9 +10,10 @@ Model
   Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
   https://creativecommons.org/licenses/by/4.0/   (full text: LICENSE-model-CC-BY-4.0.txt)
 
-Voice
-  "Alba", from the recordings of Alba Mackenna, released under CC BY 4.0
-  (https://huggingface.co/kyutai/tts-voices).
+Voices
+  "Marius" and "Javert" are built-in voices from Kyutai's voice collection (voice-donations),
+  released under CC0 (public domain dedication). https://huggingface.co/kyutai/tts-voices
+  They are AI-generated speech, not recordings of the people who donated the originals.
 
 ONNX export of the model
   KevinAHM/pocket-tts-onnx, CC BY 4.0. https://huggingface.co/KevinAHM/pocket-tts-onnx
