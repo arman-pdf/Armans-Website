@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react';
 import posterUrl from '../assets/terrain.svg?url';
 import meta from '../assets/terrain.json';
 
-const SEEN_KEY = 'ak-intro-seen';
+// Plays on every fresh load of the home page. Deep links (e.g. a project page from a résumé)
+// and in-site navigation never see it; reduced-motion users skip it.
+const shouldSkip = () =>
+  window.location.pathname !== '/' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const shouldSkip = () => {
-  try {
-    if (sessionStorage.getItem(SEEN_KEY)) return true;
-  } catch { /* storage blocked: still show once per load */ }
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-// First visit of a session only: terrain draws itself while the elevation climbs.
+// Terrain draws itself while the elevation climbs, then the panel lifts away.
 export default function Loader() {
   const [phase, setPhase] = useState(() => (shouldSkip() ? 'done' : 'in'));
   const [elev, setElev] = useState(meta.minElevation);
@@ -34,7 +30,6 @@ export default function Loader() {
 
   useEffect(() => {
     if (phase === 'out') {
-      try { sessionStorage.setItem(SEEN_KEY, '1'); } catch { /* ignore */ }
       const done = setTimeout(() => setPhase('done'), 700);
       return () => clearTimeout(done);
     }

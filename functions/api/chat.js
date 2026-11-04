@@ -1,8 +1,10 @@
 // Cloudflare Pages Function: POST /api/chat
-// Streams a short answer about Arman's projects. Provider order:
-//   1. Workers AI binding (env.AI)       production: no API key exists anywhere
-//   2. Workers AI over REST              local dev: CF_ACCOUNT_ID + CF_API_TOKEN in .dev.vars
-//   3. Ollama Cloud (OLLAMA_API_KEY)     optional; needs paid credits on Ollama's side
+// Streams a short answer about Arman's projects. Provider order (first one configured wins):
+//   1. Groq (GROQ_API_KEY)               free tier, OpenAI-compatible, fast
+//   2. Workers AI binding (env.AI)       production: no API key exists anywhere
+//   3. Workers AI over REST              local dev: CF_ACCOUNT_ID + CF_API_TOKEN in .dev.vars
+//   4. Ollama Cloud (OLLAMA_API_KEY)     optional; needs paid credits on Ollama's side
+// ASSISTANT_MOCK only answers with sample text when NO real provider is configured.
 import { buildSystemPrompt } from '../_prompt.js';
 
 const EMAIL = 'azkanorw@uwaterloo.ca';
@@ -12,6 +14,7 @@ const MAX_USER_CHARS = 500;
 const MAX_ASSISTANT_CHARS = 2_000;
 const OLLAMA_URL = 'https://ollama.com/api/chat';
 const WORKERS_MODEL = '@cf/qwen/qwen3-30b-a3b-fp8'; // ~30 neurons per question: ~300 questions/day free
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GEN = { temperature: 0.3, max_tokens: 400 };
 
 const json = (status, body, extra = {}) =>
@@ -143,11 +146,36 @@ export async function onRequestPost({ request, env }) {
 
   const stream = { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } };
 
-  if (env.ASSISTANT_MOCK) return new Response(MOCK, stream);
-  const system = { role: 'system', content: buildSystemPrompt(EMAIL) };
+  const hasProvider = env.GROQ_API_KEY || env.AI || (env.CF_ACCOUNT_ID && env.CF_API_TOKEN) || env.OLLAMA_API_KEY;
+  if (env.ASSISTANT_MOCK && !hasProvider) return new Response(MOCK, stream);
+  const system = { role: 'system', content: buildSystemPrompt(EMAIL, messages.filter((m) => m.role === 'user').map((m) => m.content)) };
   const model = env.WORKERS_MODEL || WORKERS_MODEL;
 
-  // 1 + 2: Workers AI (binding in production, REST for local testing)
+  // 1: Groq (OpenAI-compatible streaming)
+  if (env.GROQ_API_KEY) {
+    try {
+      const res = await fetch(GROQ_URL, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${env.GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: env.GROQ_MODEL || 'openai/gpt-oss-120b',
+          stream: true,
+          messages: [system, ...messages],
+          temperature: GEN.temperature,
+          max_completion_tokens: 700, // reasoning tokens count too; the visible answer stays short by instruction
+          reasoning_effort: 'low',
+          include_reasoning: false,
+        }),
+      });
+      if (res.status === 429 || res.status === 402) return json(503, { error: 'quota' });
+      if (!res.ok || !res.body) return json(503, { error: 'unavailable' });
+      return new Response(sseToText(res.body), stream);
+    } catch {
+      return json(503, { error: 'unavailable' });
+    }
+  }
+
+  // 2 + 3: Workers AI (binding in production, REST for local testing)
   if (env.AI || (env.CF_ACCOUNT_ID && env.CF_API_TOKEN)) {
     try {
       let body;
@@ -169,7 +197,7 @@ export async function onRequestPost({ request, env }) {
     }
   }
 
-  // 3: Ollama Cloud
+  // 4: Ollama Cloud
   if (!env.OLLAMA_API_KEY) return json(503, { error: 'not_configured' });
   let upstream;
   try {
