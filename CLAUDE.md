@@ -1,155 +1,72 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
-## Project Overview
+## What this is
 
-This is "Arman Kanorwalla's Environmental Science Portfolio" - a React-based personal portfolio website showcasing environmental science projects. The project uses modern 2025 web design trends including glassmorphism, animated backgrounds, glowing effects, and interactive particles.
+Arman Kanorwalla's portfolio (environmental scientist / geoscience specialist). Product context lives in [PRODUCT.md](PRODUCT.md): read it before design work. The owner is not technical: explain decisions plainly and keep tooling simple. Running cost must stay $0.
 
 ## Stack
 
-- **Framework:** React 18.3.1
-- **Build Tool:** Vite 5.1.4
-- **Styling:** Tailwind CSS 3.4.1 + custom CSS
-- **UI Library:** lucide-react (icons)
-- **Node:** Uses ES modules (`"type": "module"` in package.json)
+- React 18 + react-router-dom 7, Vite 8, Tailwind CSS 3
+- Three.js + GSAP (lazy-loaded 3D terrain, desktop only)
+- Cloudflare Pages + Pages Functions (`/functions`) for hosting and the server side
+- Assistant model: Ollama Cloud (`gpt-oss`), key in an environment variable, never in code
+- Fonts self-hosted via `@fontsource` (Bricolage Grotesque, IBM Plex Sans/Mono)
 
-## Common Commands
+## Commands
 
 ```bash
-npm run dev        # Start dev server at http://localhost:3000 (auto-opens)
-npm run build      # Production build to /dist directory
-npm run preview    # Preview production build locally
+npm run dev        # http://localhost:3000 (also runs /functions locally; secrets in .dev.vars)
+npm run build      # prebuild regenerates functions/_knowledge.js, then builds to /dist
+npm run preview    # serve the production build
+node scripts/import-projects.mjs   # re-import PORTFOLIO_PROJECTS.md -> src/projects.json
+node scripts/build-terrain.mjs     # rebuild terrain data (needs network; output is committed)
 ```
 
-## Project Structure
+Node must be >= 22.23.4 (October 2026 security release). Restart `npm run dev` after editing `tailwind.config.js` or `vite.config.js`.
+
+## Structure
 
 ```
 src/
-├── index.jsx                           # Entry point - renders EnvironmentalPortfolioEnhanced
-├── index.css                           # Global styles (Tailwind + custom CSS)
-├── EnvironmentalPortfolioEnhanced.jsx  # Main portfolio component with all enhancements
-├── EnvironmentalPortfolio.jsx          # Original portfolio component (fallback)
-└── components/
-    ├── AnimatedBackground.jsx          # Canvas-based gradient mesh background
-    ├── GlowingCard.jsx                 # Cards with mouse-tracking glow effects
-    ├── FloatingParticles.jsx           # Particle system with physics animation
-    ├── GlassNavigation.jsx             # Glassmorphism navigation bar
-    ├── MagneticButton.jsx              # Buttons that follow mouse cursor
-    ├── ProjectModal.jsx                # Modal for displaying project details
-    ├── ExperienceModal.jsx             # Modal for experience/education details
-    ├── FloatingChatButton.jsx          # Floating action button
-    └── ScrollIndicator.jsx             # Visual scroll progress indicator
+  content.js            all site copy (profile, bio, skills, experience, education, projectLinks)
+  projects.json         GENERATED from PORTFOLIO_PROJECTS.md: edit the markdown, re-run the importer
+  pages/                Home, Work, Projects, ProjectDetail, About, Contact
+  components/           Nav, Footer, Layout, Loader, DepthGauge, TerrainFigure/Canvas, Assistant,
+                        ContactForm, ProjectImage, ContourTile, Entry, PageHeader, ErrorBoundary
+  lib/askStream.js      client for /api/chat (streams text)
+  assets/terrain.*      Waterloo Moraine elevation data + still SVG (from scripts/build-terrain.mjs)
+functions/api/          chat.js, contact.js (Cloudflare Pages Functions)
+functions/_prompt.js    assistant system prompt; _knowledge.js is generated (gitignored)
+public/projects/<slug>/ hero.jpg, thumb.jpg, gallery-N.jpg (ID-free crops)
 ```
 
-## Architecture & Key Design Patterns
+## Design system ("field survey")
 
-### Component Hierarchy
+- Tokens are RGB channels in `src/index.css` (`--paper-rgb`, ...) so Tailwind opacity works (`bg-paper/80`). Never define a Tailwind colour as a plain `var(--x)`: opacity modifiers silently fail.
+- Palette: paper (warm off-white), ink, deep green panel, ONE accent: survey-flag orange (`flag`, `flag-ink` for text on paper). No other accent colours.
+- Type: Bricolage Grotesque for display, IBM Plex Sans for text, IBM Plex Mono only for data/coordinates.
+- Banned: particles, gradient or glass backgrounds, glow, card grids of identical tiles, icon tiles, eyebrow labels above headings, section numbers, hero stat strips, gradient text, bounce/pulse animations.
+- Motion: one authored moment (the terrain + first-visit loader). Respect `prefers-reduced-motion`.
+- The elevation gauge intentionally uses `mix-blend-difference`; keep it.
 
-```
-EnvironmentalPortfolioEnhanced (Main)
-├── AnimatedBackground (fullscreen canvas background)
-├── FloatingParticles (ambient particle animation)
-├── GlassNavigation (sticky header)
-├── Main content sections
-│   ├── Hero section with GlowingCard
-│   ├── Projects section with multiple GlowingCard + ProjectModal
-│   ├── Experience section with ExperienceModal
-│   └── Skills section
-├── MagneticButton (scattered throughout)
-└── FloatingChatButton (fixed bottom-right)
-```
+## Safety rules (do not regress)
 
-### Core Interactive Components
+- WebGL must never take the page down: `TerrainCanvas` refuses software rendering and slow frames; `ErrorBoundary` wraps it and the app root. Phones/reduced-motion get the static SVG.
+- Student ID numbers appear in the raw course PDFs/DOCX. Never commit them or link raw files. `projects_selected.zip` and `*.zip` are gitignored. Only use cropped figures verified by eye.
+- Other students' names/work must not appear (e.g. the La Cloche sign-up sheet was excluded).
+- Assistant answers only from `functions/_knowledge.js` (projects). Do not widen it without the owner's approval. Group work must credit teammates.
+- Secrets live in `.dev.vars` (local) and the Cloudflare dashboard (production). Never commit them.
+- Dependencies: keep `npm audit` at 0, versions pinned exactly (`.npmrc`), use `npm ci`; install scripts are skipped in CI.
 
-1. **GlowingCard** - Base component for all content cards. Features:
-   - Mouse position tracking via `onMouseMove`
-   - Radial gradient glow that follows cursor
-   - Configurable glow colors (green, blue, cyan, purple, orange)
-   - CSS transitions for smooth effects
+## Testing
 
-2. **FloatingParticles** - Canvas-based animation system. Uses:
-   - `requestAnimationFrame` for 60fps animation
-   - Physics calculations for particle movement
-   - Optional mouse proximity detection (particles flee from cursor)
-   - Responsive particle count based on screen size
+Use the Playwright MCP tools for UI work: navigate to http://localhost:3000, take screenshots at 1280px and 375px, check console errors, and verify interactions. The first-visit loader is skipped when `sessionStorage['ak-intro-seen']` is set.
 
-3. **GlassNavigation** - Scroll-aware header. Implements:
-   - Dynamic blur effect based on scroll position
-   - Active link highlighting with smooth transitions
-   - Sticky positioning with CSS backdrop-filter
+## Open items
 
-4. **MagneticButton** - Interactive button with mouse magnetism effect. Uses:
-   - Distance calculation from cursor to button
-   - CSS transform for smooth following motion
-   - Ripple animation on click
-
-### Styling Approach
-
-- **Tailwind CSS** for utility-first styling
-- **Custom CSS** in `index.css` for:
-  - Canvas animations (AnimatedBackground, FloatingParticles)
-  - Complex gradients and glowing effects
-  - Glassmorphism effects (blur, backdrop-filter)
-  - CSS animations and keyframes
-- **Inline styles** for dynamic values (mouse-tracked gradients in GlowingCard)
-
-### Performance Considerations
-
-- Canvas-based components (AnimatedBackground, FloatingParticles) run GPU-accelerated animations at ~0.5-2% CPU
-- GlowingCard uses CSS transforms (GPU-accelerated) rather than repositioning elements
-- Particle count automatically reduces on smaller screens
-- `prefers-reduced-motion` media query respected for accessibility
-
-## Development Workflow
-
-### Testing & Debugging
-
-**IMPORTANT: Always use Playwright MCP tools when developing, debugging, or testing the website.**
-
-- Use `mcp__playwright__browser_navigate` to open the dev server (http://localhost:3000)
-- Use `mcp__playwright__browser_snapshot` to capture accessibility snapshots (better than screenshots)
-- Use `mcp__playwright__browser_take_screenshot` for visual verification when needed
-- Use `mcp__playwright__browser_click` to test interactive components (GlowingCard, MagneticButton, modals)
-- Use `mcp__playwright__browser_hover` to verify hover effects and animations
-- Use `mcp__playwright__browser_console_messages` to check for JavaScript errors
-- Use `mcp__playwright__browser_evaluate` to test JavaScript functionality in real-time
-
-This ensures accurate testing of interactive features like mouse-tracking glows, particle animations, and glassmorphism effects.
-
-### Adding New Sections
-
-1. Create content in `EnvironmentalPortfolioEnhanced.jsx`
-2. Wrap content in `<GlowingCard>` for consistent styling
-3. Use `glowColor` prop to match category (green=environmental, blue=water, orange=geology, etc.)
-4. Use `MagneticButton` for CTAs
-5. Use modals (ProjectModal, ExperienceModal) for detailed information
-
-### Customizing Visual Effects
-
-- **Particle Count:** Adjust `particleCount` prop in FloatingParticles (reduce to ~20 for mobile)
-- **Glow Intensity:** Modify CSS in `index.css` (search for `radial-gradient`)
-- **Animation Speed:** Adjust duration values in `index.css` keyframes
-- **Colors:** Update environmental color palette in component files (currently: emerald, blue, cyan, teal)
-
-### Modals
-
-- `ProjectModal` - displays project details with descriptions, technologies, links
-- `ExperienceModal` - displays experience/education info
-- Both controlled via state in parent component with `isOpen` and `onClose` props
-
-## Important Files
-
-- [QUICK_START.md](QUICK_START.md) - Quick reference for design features and customization tips
-- [DESIGN_UPGRADE_README.md](DESIGN_UPGRADE_README.md) - Comprehensive documentation of all components and advanced customization
-- [vite.config.js](vite.config.js) - Dev server runs on port 3000 with auto-open
-- [tailwind.config.js](tailwind.config.js) - Tailwind configuration (minimal, uses defaults)
-- [postcss.config.js](postcss.config.js) - PostCSS config for Tailwind
-
-## Current Status
-
-- ✅ Enhanced design fully implemented with all modern effects
-- ✅ Two versions available: EnvironmentalPortfolio (basic) and EnvironmentalPortfolioEnhanced (with effects)
-- ✅ Production-ready with optimized performance
-- ✅ Fully responsive (particles and layout adapt to mobile)
-- ✅ Accessibility features included (reduced-motion support, proper contrast)
+- Real Ollama key + model choice (`OLLAMA_MODEL`), Turnstile keys, rate-limit binding at deploy time
+- Contact destination (`CONTACT_WEBHOOK_URL`, e.g. n8n) is undecided
+- Voice (push-to-talk + opt-in Kyutai TTS) not built yet
+- Résumé PDF, headshot, per-project GitHub links (`projectLinks` in content.js)

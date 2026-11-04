@@ -1,0 +1,125 @@
+// Cloudflare Pages Function: POST /api/chat
+// Streams a short answer about Arman's projects from an Ollama Cloud model.
+import { buildSystemPrompt } from '../_prompt.js';
+
+const EMAIL = 'azkanorw@uwaterloo.ca';
+const MAX_BODY = 24_000; // bytes
+const MAX_TURNS = 10; // messages kept from history
+const MAX_USER_CHARS = 500;
+const MAX_ASSISTANT_CHARS = 2_000;
+const OLLAMA_URL = 'https://ollama.com/api/chat';
+
+const json = (status, body, extra = {}) =>
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extra } });
+
+function cleanMessages(input) {
+  if (!Array.isArray(input) || input.length === 0) return null;
+  const out = [];
+  for (const m of input.slice(-MAX_TURNS)) {
+    if (!m || (m.role !== 'user' && m.role !== 'assistant') || typeof m.content !== 'string') return null;
+    const max = m.role === 'user' ? MAX_USER_CHARS : MAX_ASSISTANT_CHARS;
+    if (m.content.length === 0 || m.content.length > max) return null;
+    out.push({ role: m.role, content: m.content });
+  }
+  return out.at(-1).role === 'user' ? out : null;
+}
+
+async function verifyTurnstile(env, token, ip) {
+  if (!env.TURNSTILE_SECRET) return true; // not configured (local dev)
+  if (!token) return false;
+  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: token, remoteip: ip }),
+  });
+  return Boolean((await res.json()).success);
+}
+
+// Best-effort global daily cap using KV when bound; protects the free model quota.
+async function underDailyCap(env) {
+  if (!env.CHAT_KV) return true;
+  const key = `day:${new Date().toISOString().slice(0, 10)}`;
+  const cap = Number(env.DAILY_CAP) || 300;
+  const used = Number(await env.CHAT_KV.get(key)) || 0;
+  if (used >= cap) return false;
+  await env.CHAT_KV.put(key, String(used + 1), { expirationTtl: 172_800 });
+  return true;
+}
+
+// Ollama streams newline-delimited JSON; forward only the visible text.
+function ndjsonToText(upstream) {
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let buffer = '';
+  return new ReadableStream({
+    async start(controller) {
+      const reader = upstream.getReader();
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let nl;
+          while ((nl = buffer.indexOf('\n')) >= 0) {
+            const line = buffer.slice(0, nl).trim();
+            buffer = buffer.slice(nl + 1);
+            if (!line) continue;
+            try {
+              const piece = JSON.parse(line)?.message?.content;
+              if (piece) controller.enqueue(encoder.encode(piece));
+            } catch { /* skip a malformed line */ }
+          }
+        }
+      } finally {
+        controller.close();
+      }
+    },
+  });
+}
+
+const MOCK = "This is a local test answer. Arman's Ore Chimney report (see /projects/ore-chimney-ni-43-101) was a group project with Celina Cayabyab, Michael Forte and Kiara Harmon. It validated 164 core assays and estimated an indicated resource of about 646 oz of gold.";
+
+export async function onRequestPost({ request, env }) {
+  const url = new URL(request.url);
+  const origin = request.headers.get('Origin');
+  if (origin && origin !== url.origin) return json(403, { error: 'forbidden' });
+
+  const len = Number(request.headers.get('Content-Length') || 0);
+  if (len > MAX_BODY) return json(413, { error: 'too_large' });
+
+  let body;
+  try { body = JSON.parse(await request.text()); } catch { return json(400, { error: 'bad_request' }); }
+  const messages = cleanMessages(body?.messages);
+  if (!messages) return json(400, { error: 'bad_request' });
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  if (!(await verifyTurnstile(env, request.headers.get('X-Turnstile-Token'), ip))) return json(403, { error: 'bot_check' });
+  if (env.RATE_LIMITER && !(await env.RATE_LIMITER.limit({ key: `chat:${ip}` })).success) return json(429, { error: 'rate_limited' });
+  if (!(await underDailyCap(env))) return json(503, { error: 'daily_cap' });
+
+  const stream = { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } };
+
+  if (env.ASSISTANT_MOCK) return new Response(MOCK, stream);
+  if (!env.OLLAMA_API_KEY) return json(503, { error: 'not_configured' });
+
+  let upstream;
+  try {
+    upstream = await fetch(OLLAMA_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${env.OLLAMA_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: env.OLLAMA_MODEL || 'gpt-oss:120b',
+        stream: true,
+        messages: [{ role: 'system', content: buildSystemPrompt(EMAIL) }, ...messages],
+        options: { temperature: 0.3, num_predict: 400 },
+      }),
+    });
+  } catch {
+    return json(503, { error: 'unavailable' });
+  }
+  if (upstream.status === 429) return json(503, { error: 'quota' });
+  if (!upstream.ok || !upstream.body) return json(503, { error: 'unavailable' });
+
+  return new Response(ndjsonToText(upstream.body), stream);
+}
+
+export const onRequest = () => json(405, { error: 'method_not_allowed' }, { Allow: 'POST' });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import TerrainFigure from '../components/TerrainFigure';
+import Assistant from '../components/Assistant';
 import { profile, experiences, projects } from '../content';
 
 const [first, ...rest] = profile.name.split(' ');
@@ -34,6 +35,7 @@ export default function Home() {
                 Get in touch
               </Link>
             </div>
+            <Assistant tone="deep" />
           </div>
           <div className="lg:col-span-5">
             <TerrainFigure />

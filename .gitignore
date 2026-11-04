@@ -35,3 +35,9 @@ __pycache__/
 projects_selected.zip
 projects/
 *.zip
+
+# Local secrets (API keys): never commit
+.dev.vars*
+.env*
+.wrangler/
+functions/_knowledge.js
