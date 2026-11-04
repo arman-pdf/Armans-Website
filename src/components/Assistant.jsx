@@ -8,7 +8,7 @@ const SUGGESTIONS = [
   'What did the Ore Chimney report conclude?',
   'Has Arman worked with groundwater data?',
 ];
-const MAX_QUESTIONS = 5;
+const MAX_QUESTIONS = 12;
 const SLUGS = new Set(projects.map((p) => p.slug));
 
 const ERRORS = {

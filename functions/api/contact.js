@@ -1,6 +1,9 @@
 // Cloudflare Pages Function: POST /api/contact
-// Validates the message, then forwards it to CONTACT_WEBHOOK_URL (e.g. an n8n webhook)
-// and/or keeps a backup copy in KV. The destination is configured, not hard-coded.
+// Validates the message, then delivers it by any of these (whichever are configured):
+//   RESEND_API_KEY + CONTACT_TO  -> email via Resend (optional CONTACT_FROM)
+//   CONTACT_WEBHOOK_URL          -> e.g. an n8n webhook
+//   CONTACT_KV                   -> backup copy so nothing is lost
+// The destination is configured in the environment, never hard-coded.
 const MAX_BODY = 10_000;
 
 const json = (status, body) =>
@@ -57,6 +60,24 @@ export async function onRequestPost({ request, env }) {
       });
       delivered = delivered || res.ok;
     } catch { /* fall through: KV copy may still have saved it */ }
+  }
+
+  if (env.RESEND_API_KEY && env.CONTACT_TO) {
+    try {
+      const oneLine = (v, n) => v.replace(/[\r\n\t]+/g, ' ').slice(0, n);
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: env.CONTACT_FROM || 'Portfolio <onboarding@resend.dev>',
+          to: [env.CONTACT_TO],
+          reply_to: email, // hitting Reply answers the visitor directly
+          subject: `Portfolio message from ${oneLine(name, 80)}`,
+          text: `${message}\n\n-- \n${oneLine(name, 120)} <${email}>\nSent from ${url.origin}`,
+        }),
+      });
+      delivered = delivered || res.ok;
+    } catch { /* fall through */ }
   }
 
   return delivered ? json(200, { ok: true }) : json(503, { error: 'not_configured' });

@@ -131,7 +131,10 @@ export const projectsIntro =
 // Imported from PORTFOLIO_PROJECTS.md by scripts/import-projects.mjs. Edit the markdown, then re-run the script.
 export const projects = projectData;
 
-// Where each project's files live. Fill in as repos are created, e.g.
-//   'ore-chimney-ni-43-101': { github: 'https://github.com/arman-pdf/ore-chimney', report: 'https://...' }
+// Where each project's files live. Any of these work for `report` and `github`:
+//   - a file hosted on this site:  '/projects/ore-chimney-ni-43-101/report.pdf'  (put it in public/projects/<slug>/)
+//   - an outside link (Drive, GitHub, ...)
+//   'ore-chimney-ni-43-101': { report: '/projects/ore-chimney-ni-43-101/report.pdf', github: 'https://github.com/...' }
+// ONLY use cleaned files: raw course PDFs/DOCX contain student ID numbers.
 // Keys are project slugs. Nothing renders for projects without an entry.
 export const projectLinks = {};
