@@ -13,6 +13,7 @@ const SLUGS = new Set(projects.map((p) => p.slug));
 
 const ERRORS = {
   rate_limited: 'That is a lot of questions at once. Please wait a minute and try again.',
+  busy: 'The assistant is busy answering other visitors. Please try again in a minute.',
   daily_cap: "The assistant has reached its free limit for today.",
   quota: "The assistant has reached its free limit for today.",
   bot_check: 'The request could not be verified. Please reload the page and try again.',

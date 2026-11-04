@@ -5,7 +5,7 @@ const stem = (w) => (w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : w);
 const words = (s) => (s.toLowerCase().match(/[a-z0-9][a-z0-9+#.\-]{1,}/g) ?? []).map(stem).filter((w) => w.length >= 3 && !STOP.has(w));
 
 // Pick the few write-ups most relevant to the latest questions (simple keyword scoring).
-export function pickNotes(userTexts, k = 3) {
+export function pickNotes(userTexts, k = 2) {
   const q = new Set(words(userTexts.slice(-2).join(' ')));
   if (q.size === 0) return [];
   return NOTES

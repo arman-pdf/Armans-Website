@@ -162,12 +162,16 @@ export async function onRequestPost({ request, env }) {
           stream: true,
           messages: [system, ...messages],
           temperature: GEN.temperature,
-          max_completion_tokens: 700, // reasoning tokens count too; the visible answer stays short by instruction
+          max_completion_tokens: 500, // Groq reserves prompt + this many tokens per request against its per-minute cap
           reasoning_effort: 'low',
           include_reasoning: false,
         }),
       });
-      if (res.status === 429 || res.status === 402) return json(503, { error: 'quota' });
+      if (res.status === 429 || res.status === 402) {
+        // Per-minute caps clear in seconds ('busy'); per-day caps do not ('quota').
+        const msg = JSON.stringify(await res.json().catch(() => ({}))).toLowerCase();
+        return json(503, { error: /per day|tpd|rpd|daily/.test(msg) ? 'quota' : 'busy' });
+      }
       if (!res.ok || !res.body) return json(503, { error: 'unavailable' });
       return new Response(sseToText(res.body), stream);
     } catch {
