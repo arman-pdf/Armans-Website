@@ -10,7 +10,7 @@ function Arrow() {
 }
 
 export default function Home() {
-  const featured = projects.slice(0, 4);
+  const featured = projects.filter((p) => p.featured).slice(0, 5);
 
   return (
     <>
@@ -71,7 +71,7 @@ export default function Home() {
                 <Link to={`/projects/${p.slug}`} className="group flex items-baseline justify-between gap-6 py-6">
                   <span>
                     <span className="block font-display font-bold text-xl md:text-2xl tracking-[-0.02em] group-hover:text-flag-ink transition-colors text-balance">{p.title}</span>
-                    <span className="mt-1 block text-ink-2 max-w-[60ch]">{p.brief}</span>
+                    <span className="mt-1 block text-ink-2 max-w-[60ch]">{p.tagline}</span>
                   </span>
                   <Arrow />
                 </Link>

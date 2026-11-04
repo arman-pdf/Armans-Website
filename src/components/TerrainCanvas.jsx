@@ -12,7 +12,7 @@ const INK = new THREE.Color(0xeee8da);
 const INK_FAR = new THREE.Color(0x34463c);
 const ROW_STEP = 2; // draw every 2nd row of the 160x120 grid
 
-export default function TerrainCanvas({ onReady }) {
+export default function TerrainCanvas({ onReady, onFail }) {
   const host = useRef(null);
 
   useEffect(() => {
@@ -22,8 +22,16 @@ export default function TerrainCanvas({ onReady }) {
     let visible = true;
     const cleanups = [];
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Refuse software/slow WebGL: the poster image is better than a laggy page.
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, failIfMajorPerformanceCaveat: true });
+    } catch {
+      onFail?.();
+      return undefined;
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onFail?.(); });
     renderer.setClearColor(PAPER, 1);
     el.appendChild(renderer.domElement);
     renderer.domElement.style.cssText = 'width:100%;height:100%;display:block';
@@ -120,9 +128,17 @@ export default function TerrainCanvas({ onReady }) {
     const target = new THREE.Vector3(0, 0.1, 0);
     let sx = 0, sy = 0;
     const R = 3.3;
+    let last = 0, slow = 0, frames = 0;
     const tick = (now) => {
       raf = requestAnimationFrame(tick);
-      if (!visible || document.hidden) return;
+      if (!visible || document.hidden) { last = 0; return; }
+      // Frame-time guard: if the first ~2s average slower than ~28 fps, give up.
+      if (last && frames < 120) {
+        slow += now - last;
+        frames += 1;
+        if (frames === 120 && slow / frames > 36) { onFail?.(); return; }
+      }
+      last = now;
       state.t = now / 1000;
       sx += (state.px - sx) * 0.05;
       sy += (state.py - sy) * 0.05;
@@ -141,7 +157,7 @@ export default function TerrainCanvas({ onReady }) {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [onReady]);
+  }, [onReady, onFail]);
 
   return <div ref={host} className="h-full w-full" />;
 }

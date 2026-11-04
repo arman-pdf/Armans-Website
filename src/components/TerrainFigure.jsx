@@ -1,6 +1,7 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import posterUrl from '../assets/terrain.svg?url';
 import meta from '../assets/terrain.json';
+import ErrorBoundary from './ErrorBoundary';
 
 const TerrainCanvas = React.lazy(() => import('./TerrainCanvas'));
 
@@ -15,6 +16,9 @@ const canRun3D = () =>
 export default function TerrainFigure() {
   const [live, setLive] = useState(false);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
+  const onFail = useCallback(() => setFailed(true), []);
 
   useEffect(() => {
     if (!canRun3D()) return;
@@ -34,14 +38,16 @@ export default function TerrainFigure() {
           height="400"
           className="absolute inset-0 h-full w-full"
         />
-        {live && (
+        {live && !failed && (
           <Suspense fallback={null}>
             <div
               className="absolute inset-0 transition-opacity duration-700"
               style={{ opacity: ready ? 1 : 0 }}
               aria-hidden="true"
             >
-              <TerrainCanvas onReady={() => setReady(true)} />
+              <ErrorBoundary onError={onFail}>
+                <TerrainCanvas onReady={onReady} onFail={onFail} />
+              </ErrorBoundary>
             </div>
           </Suspense>
         )}

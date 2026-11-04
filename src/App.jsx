@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
+import { contact } from './content';
 import Home from './pages/Home';
 import Work from './pages/Work';
 import Projects from './pages/Projects';
@@ -10,6 +12,14 @@ import Contact from './pages/Contact';
 
 export default function App() {
   return (
+    <ErrorBoundary
+      fallback={
+        <div style={{ padding: '4rem 1.5rem', maxWidth: 560, margin: '0 auto', fontFamily: 'system-ui, sans-serif' }}>
+          <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Arman Kanorwalla</h1>
+          <p>Something went wrong loading this page. Please reload, or email <a href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
+        </div>
+      }
+    >
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
@@ -24,5 +34,6 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }

@@ -1,0 +1,718 @@
+[
+  {
+    "slug": "alberta-groundwater-vulnerability",
+    "title": "Mapping Groundwater Vulnerability Across Alberta",
+    "featured": true,
+    "year": "2024–25",
+    "yearGroup": "Year 5",
+    "tagline": "Honours thesis proposal on finding a practical, decision-ready way to map groundwater risk across a province.",
+    "context": "Summer 2025 · EARTH 436A/491 Honours Thesis · supervised by Dr. Andrea Brookfield",
+    "role": "Sole author",
+    "team": "",
+    "tags": [
+      "Groundwater & Hydrology",
+      "GIS & Remote Sensing",
+      "Data Science (Python/R)"
+    ],
+    "tools": "DRASTIC and other overlay/index methods, statistical and machine-learning approaches, MODFLOW/MT3D process models (reviewed as an option), Pastas time-series analysis, Alberta GOWN observation-well data, Alberta Geological Survey GIS layers",
+    "summary": "A thesis proposal that reviews five families of groundwater-vulnerability methods against Alberta's real data. It recommends a hybrid approach that combines contamination-risk mapping with drought sensitivity from multi-decade well records.",
+    "overview": "More than 90% of rural Albertans rely on groundwater, and that groundwater is under pressure from pumping, agriculture and climate change. The literature offers many ways to assess vulnerability, but few are realistic to apply across a whole province. My proposal sorts the options into five families: overlay/index, statistical/ML, process-based models, time-series analysis, and hybrids. I then tested each against what Alberta's monitoring and GIS data can actually support. The aim was a method that decision-makers could use now, not one that is only possible in theory.",
+    "did": [
+      {
+        "text": "Wrote a structured literature review of groundwater-vulnerability assessment methods, covering their strengths, assumptions and data needs.",
+        "sub": []
+      },
+      {
+        "text": "Audited Alberta's data landscape: the 10 hydrogeological regions, GOWN well records, water-chemistry coverage, and GIS layers for geology, soils and depth to water.",
+        "sub": []
+      },
+      {
+        "text": "Compared every method on interpretability, province-wide coverage and how much data it needs.",
+        "sub": []
+      },
+      {
+        "text": "Critically reviewed a related honours thesis that applied Pastas and the Standardised Groundwater Index (SGI) to drought in the South Saskatchewan River Basin.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Recommended a hybrid framework: a province-wide intrinsic overlay map for contamination susceptibility, plus a drought-sensitivity layer built from GOWN time series, with statistical validation wherever water-chemistry data is dense.",
+        "sub": []
+      },
+      {
+        "text": "Identified where detailed process models (for example in the Paskapoo and Milk River aquifers) add the most value for local decisions.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "ore-chimney-ni-43-101",
+    "title": "Ore Chimney Gold Property: NI 43-101 Technical Report",
+    "featured": true,
+    "year": "2024–25",
+    "yearGroup": "Year 5",
+    "tagline": "Took a gold prospect from drill-core assays to an investment recommendation, in industry-standard report format.",
+    "context": "Winter 2025 · EARTH 471 (Mineral Deposits)",
+    "role": "",
+    "team": "Celina Cayabyab, Michael Forte, Kiara Harmon, Arman Kanorwalla",
+    "tags": [
+      "Mineral Exploration",
+      "Geochemistry"
+    ],
+    "tools": "NI 43-101 reporting, QA/QC with CH-4 certified reference material, blanks and duplicates, polygon resource estimation, economic analysis",
+    "summary": "A 26-page NI 43-101-style report on a greenstone-hosted gold prospect in eastern Ontario. We validated 164 core assays, estimated an indicated gold resource, and recommended against further investment for now.",
+    "overview": "Acting as exploration geologists, my team evaluated a virtual drilling program on the Ore Chimney Property in Barrie Township, Ontario. The property sits in the Grenville Province on a sheared contact between Hermon Group metavolcanics and Flinton Group metasediments. We followed the structure of a real NI 43-101 technical report, from regional geology and deposit model through to resource estimate, economics and recommendations.",
+    "did": [
+      {
+        "text": "Interpreted the regional and property geology. Gold sits in quartz-carbonate veins that follow foliation, concentrated at an S-fold hinge in a shear zone.",
+        "sub": []
+      },
+      {
+        "text": "Ran QA/QC on 164 core samples plus reference materials, blanks and duplicates. Gold data passed; silver and zinc did not.",
+        "sub": []
+      },
+      {
+        "text": "Built a polygon-method resource estimate with a 0.84 g/t gold cut-off and an assumed density of 3 g/cm³.",
+        "sub": []
+      },
+      {
+        "text": "Wrote up the economic, social and environmental risks, including nearby communities, lakes, acid mine drainage and drilling costs.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Indicated resource of ~4,350 t at 4.9 g/t Au ≈ 646 oz, worth about US$2.1M at the April 2025 gold price.",
+        "sub": []
+      },
+      {
+        "text": "Concluded the deposit is too small and too risky to develop: about 1,000 times smaller than typical producing Ontario gold mines.",
+        "sub": []
+      },
+      {
+        "text": "Recommended geophysical surveying to firm up the low-confidence polymetallic potential before any more drilling.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "groundwater-precipitation-statistics",
+    "title": "Does Rain Raise Groundwater? A Statistical Test Across Three Regions",
+    "featured": true,
+    "year": "2024–25",
+    "yearGroup": "Year 5",
+    "tagline": "Python analysis of well and rainfall records from Southern Ontario, Northern Ontario and British Columbia.",
+    "context": "Winter 2025 · EARTH 355 (Water: Data to Decisions) · research poster",
+    "role": "",
+    "team": "Arman Kanorwalla & Rishaan Ghai",
+    "tags": [
+      "Data Science (Python/R)",
+      "Groundwater & Hydrology"
+    ],
+    "tools": "Python (pandas, SciPy, statsmodels, matplotlib), Pearson correlation, Mann-Kendall trend test, Theil-Sen slope, time-series and distribution plots, Ontario Provincial Groundwater Monitoring Network and BC observation-well data",
+    "summary": "We tested the common assumption that more rain means higher groundwater using 2011 well and precipitation data from three regions. The answer: not at hourly or daily scales, and the poster explains why.",
+    "overview": "Most people assume groundwater rises when it rains. In Southern Ontario's glacial terrain, though, much of the rain runs off or evaporates, and recharge can lag by weeks. We pulled public groundwater-level and precipitation records for a Southern Ontario well and compared them with sites in Northern Ontario and British Columbia. We then ran correlation and trend tests to see whether rainfall events show up in water levels.",
+    "did": [
+      {
+        "text": "Sourced, cleaned and aligned the groundwater and precipitation time series from government databases.",
+        "sub": []
+      },
+      {
+        "text": "Ran Pearson correlation, significance tests, Mann-Kendall and Theil-Sen trend analysis in Python.",
+        "sub": []
+      },
+      {
+        "text": "Built time-series, histogram and scatter visualisations and designed the research poster.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Found no significant short-term correlation between rainfall and groundwater level. Southern Ontario groundwater showed only a slight upward trend over the year.",
+        "sub": []
+      },
+      {
+        "text": "Showed that hourly and daily data hide delayed recharge.",
+        "sub": []
+      },
+      {
+        "text": "Recommended monthly aggregation, lag analysis, multi-year records, and covariates such as soil type, land use and evapotranspiration.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "la-cloche-field-mapping",
+    "title": "Field Geological Mapping: Bass Lake Syncline, La Cloche",
+    "featured": false,
+    "year": "2024–25",
+    "yearGroup": "Year 5",
+    "tagline": "Mapped a folded Precambrian sedimentary sequence and its intrusive dykes from outcrop to finished map.",
+    "context": "Winter–Spring 2025 · EARTH 390 field school",
+    "role": "",
+    "team": "Quinn Coughlin, Arman Kanorwalla, Jhoppes Wang",
+    "tags": [
+      "Field Geology"
+    ],
+    "tools": "Field mapping, strike and dip measurement, stereonets, cross-sections, stratigraphic and structural interpretation",
+    "summary": "A field-mapping project producing a geological map, three domain stereonets, cross-sections and a written local geology report for a folded quartzite, argillite and diamictite sequence cut by Sudbury and Nipissing dykes.",
+    "overview": "In the field, our team mapped part of the southern limb of a syncline in the La Cloche area. The succession runs from oldest to youngest: sub-arkosic arenite (quartzite), argillite, diamictite and arkosic siltstone. All units dip north and are cut by two generations of mafic dykes. We turned our outcrop observations into a map, structural data and a geologic history.",
+    "did": [
+      {
+        "text": "Logged lithologies and measured bedding and foliation at outcrops.",
+        "sub": []
+      },
+      {
+        "text": "Built stereonets for three structural domains and interpreted the fold geometry: an open fold with hinge 261°/20° and axial plane 261°/86°.",
+        "sub": []
+      },
+      {
+        "text": "Worked out younging directions, unconformities and cross-cutting relationships. The older Nipissing diabase is more deformed; the Sudbury dyke is thicker and younger.",
+        "sub": []
+      },
+      {
+        "text": "Co-wrote the local geology report, cross-sections and geologic history.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A finished geological map with legend, stereonets and a written synthesis of stratigraphy, structure and intrusive history.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": null
+  },
+  {
+    "slug": "python-environmental-data-labs",
+    "title": "Python for Environmental Data: Statistics Lab Portfolio",
+    "featured": false,
+    "year": "2024–25",
+    "yearGroup": "Year 5",
+    "tagline": "11 Jupyter notebooks taking real environmental datasets from raw data to statistical decisions.",
+    "context": "Winter 2025 · EARTH 355",
+    "role": "Individual",
+    "team": "",
+    "tags": [
+      "Data Science (Python/R)"
+    ],
+    "tools": "Python, Jupyter, pandas, NumPy, SciPy, statsmodels, scikit-learn, matplotlib",
+    "summary": "A series of Python notebooks covering descriptive statistics, hypothesis tests, regression, trend detection and spatial point-pattern analysis on environmental data such as tree rings, water quality and playa features.",
+    "overview": "This lab series was my core training in using code to analyse environmental data. Each notebook works through one statistical technique on a real dataset, from reading and cleaning data to visualising results and drawing a decision from a test.",
+    "did": [
+      {
+        "text": "Data handling and descriptive statistics, histograms, kernel density and LOWESS smoothing.",
+        "sub": []
+      },
+      {
+        "text": "Confidence intervals, one-sample t-tests, chi-square and runs tests.",
+        "sub": []
+      },
+      {
+        "text": "Correlation and linear regression in statsmodels and scikit-learn.",
+        "sub": []
+      },
+      {
+        "text": "Mann-Kendall trend tests for time series.",
+        "sub": []
+      },
+      {
+        "text": "Spatial mapping, quadrat analysis, nearest-neighbour analysis and convex hulls.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A reusable toolkit that I then applied directly in my groundwater-precipitation research poster and thesis work.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": null
+  },
+  {
+    "slug": "abitau-lake-quaternary-geochemistry",
+    "title": "Reconstructing Glacial History at Abitau Lake, NWT",
+    "featured": true,
+    "year": "2023–24",
+    "yearGroup": "Year 4",
+    "tagline": "Combined GIS landform mapping with lake-sediment ICP-MS geochemistry to rebuild how ice moved across the Canadian Shield.",
+    "context": "Fall 2023 · EARTH 440 (Quaternary Geology) · two-part term project",
+    "role": "Sole author",
+    "team": "",
+    "tags": [
+      "GIS & Remote Sensing",
+      "Geochemistry",
+      "Field Geology"
+    ],
+    "tools": "QGIS, ArcGIS Pro, remote sensing, Geological Survey of Canada (GSC) surficial geology maps (CGM 350, NTS 75-B), ICP-MS data from GSC Open File 8082, element-distribution mapping",
+    "summary": "A regional study of the Abitau Lake map sheet (NTS 75-B). I mapped drumlins, eskers and crag-and-tails to set an ice-flow chronology, then tested it with ICP-MS chemistry from more than 30 lake-sediment samples.",
+    "overview": "The Abitau Lake area sits just north of the Saskatchewan border on the Rae Province of the Canadian Shield, and is covered by deposits from the last glaciation. In Part 1 I mapped landforms and surficial units in GIS: drumlins, eskers, roches moutonnées, kames, crag-and-tails, and glaciofluvial, glaciolacustrine and organic deposits. From these I inferred a dominantly southwest ice-flow direction. In Part 2 I brought in the GSC's 2015 lake-sediment geochemistry survey and mapped element distributions to test that chronology.",
+    "did": [
+      {
+        "text": "Built GIS projects in QGIS and ArcGIS Pro with surficial geology layers, streamlined landforms and sample locations.",
+        "sub": []
+      },
+      {
+        "text": "Interpreted glacial landforms to reconstruct ice-flow direction and deglaciation.",
+        "sub": []
+      },
+      {
+        "text": "Processed ICP-MS results and mapped element concentrations to trace glacial transport and sediment provenance.",
+        "sub": []
+      },
+      {
+        "text": "Presented both parts with slides and a recorded video presentation.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "The geochemical patterns supported the proposed ice-flow chronology: element distributions matched glacial transport paths.",
+        "sub": []
+      },
+      {
+        "text": "Flagged an anomaly: sulfur is concentrated at only four sites. Also identified gaps in sampling coverage as the main limitation.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": [
+        "gallery-1.jpg",
+        "gallery-2.jpg"
+      ]
+    }
+  },
+  {
+    "slug": "waterloo-quaternary-guidebook",
+    "title": "Field-Trip Guidebook: Glacial Geology of the Waterloo Region",
+    "featured": false,
+    "year": "2023–24",
+    "yearGroup": "Year 4",
+    "tagline": "An illustrated guide to how the Laurentide Ice Sheet shaped the landscape I studied on.",
+    "context": "Fall 2023 · EARTH 440",
+    "role": "Sole author",
+    "team": "",
+    "tags": [
+      "Field Geology",
+      "GIS & Remote Sensing"
+    ],
+    "tools": "Quaternary stratigraphy, landform interpretation, scientific writing, figure design",
+    "summary": "A multi-stop guidebook covering the last glaciation in the Waterloo Region: ice-sheet dynamics, diamicton and till, the Waterloo Moraine, deglaciation around Conestogo Lake, and the Paris-Galt Moraine east of Cambridge.",
+    "overview": "Waterloo Region was once under roughly 1.5 km of ice. This guidebook takes readers through a series of field trips. Each one explains the sediments and landforms at a stop and links them to glacial erosion, transport and deposition during and after the Last Glacial Maximum.",
+    "did": [
+      {
+        "text": "Wrote the guidebook sections for each trip:",
+        "sub": [
+          "Trip 1: introduction to the last glaciation.",
+          "Trips 2B and 2C: deglaciation and the Waterloo Moraine, and the Conestogo Lake area.",
+          "Trip 3: the Paris-Galt Moraine area east of Cambridge."
+        ]
+      },
+      {
+        "text": "Built annotated figures and maps from field-trip material and published research.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A complete, referenced guidebook that a reader can follow on site.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "till-fabric-analysis",
+    "title": "Till Fabric Analysis: Reading Ice Direction From Pebbles",
+    "featured": false,
+    "year": "2023–24",
+    "yearGroup": "Year 4",
+    "tagline": "Used eigenvalue statistics and stereonets to reveal how two glacial tills were deposited.",
+    "context": "Fall 2023 · EARTH 440",
+    "role": "",
+    "team": "Arman Kanorwalla & Luka Ninkovic",
+    "tags": [
+      "Field Geology",
+      "Data Science (Python/R)"
+    ],
+    "tools": "Stereonet, EigenCalc, orientation tensors, Kamb contouring, ternary and modality-isotropy diagrams, S1/S3 biplots",
+    "summary": "We computed eigenvalues for clast orientations in two till units, classified them as a strong and a moderate bimodal fabric, and interpreted what each says about ice movement and later deformation.",
+    "overview": "The way pebbles line up in glacial till records how the ice moved. We took orientation data from two till fabrics and analysed them statistically and on stereonets to compare fabric strength and depositional process.",
+    "did": [
+      {
+        "text": "Calculated orientation tensors and eigenvalues, plus isotropy and elongation indices: 0.021 and 0.935 for Fabric 1, 0.147 and 0.757 for Fabric 5.",
+        "sub": []
+      },
+      {
+        "text": "Plotted stereonets with V1 axes and Kamb contours, ternary diagrams and S1/S3 biplots.",
+        "sub": []
+      },
+      {
+        "text": "Classified both fabrics and interpreted how they formed.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "The lower Fabric 1 is strong but has likely been deformed.",
+        "sub": []
+      },
+      {
+        "text": "The younger Fabric 5 is moderate and most likely formed by clast ploughing beneath the most recent ice sheet.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "toronto-gis-groundwater-report",
+    "title": "Using GIS to Monitor Groundwater Contamination in Toronto",
+    "featured": true,
+    "year": "2022–23",
+    "yearGroup": "Year 3",
+    "tagline": "A technical report from my City of Toronto co-op on managing contaminated-site and monitoring-well data with GIS.",
+    "context": "March 2023 · written during my co-op with City of Toronto Transportation Services (Asset Management)",
+    "role": "Sole author",
+    "team": "",
+    "tags": [
+      "GIS & Remote Sensing",
+      "Groundwater & Hydrology",
+      "Environmental Policy"
+    ],
+    "tools": "ArcGIS, monitoring-well networks, Ontario soil and groundwater standards, technical writing",
+    "summary": "A formal technical report on how Toronto's asset-management team monitors groundwater contamination along city rights-of-way, and why a GIS-based system is the right tool to manage it.",
+    "overview": "In my co-op I built a relational database of groundwater and soil monitoring locations and linked well records to GIS layers. This report documents how the City monitors contamination through monitoring wells and makes the case for GIS as the central tool for integrating, analysing, visualising and modelling contaminant data.",
+    "did": [
+      {
+        "text": "Documented the monitoring-well workflow and how it fits with provincial soil and groundwater standards.",
+        "sub": []
+      },
+      {
+        "text": "Researched GIS methods for contaminant tracking and plume modelling.",
+        "sub": []
+      },
+      {
+        "text": "Wrote recommendations for City staff.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Recommendations covered:",
+        "sub": [
+          "Protecting the public and staff.",
+          "Ensuring regulatory compliance and limiting liability.",
+          "Monitoring how contaminants of concern migrate into the right-of-way.",
+          "Centralising well and contamination data for future decisions."
+        ]
+      }
+    ],
+    "related": "a database of 22 monitoring locations with automated exceedance flags, review of more than 50 monitoring reports, and a GIS framework for more than 150 wells across the city.",
+    "image": null
+  },
+  {
+    "slug": "geomicrobiology-remediation",
+    "title": "Microbes vs Pollution: Four Geomicrobiology Experiments",
+    "featured": true,
+    "year": "2022–23",
+    "yearGroup": "Year 3",
+    "tagline": "Lab experiments using bacteria to form minerals, break down oil, leach metals and neutralise acid mine drainage.",
+    "context": "Fall 2022 · EARTH 321 (Geomicrobiology)",
+    "role": "",
+    "team": "Arman Kanorwalla with lab partner Cameron Sills",
+    "tags": [
+      "Remediation",
+      "Geochemistry"
+    ],
+    "tools": "Bioreactor and leaching-column design, light microscopy, ICP-OES, pH monitoring, most-probable-number (MPN) counts",
+    "summary": "Four experiments, each written up as a full paper, testing microbes as environmental tools. They cover banded-iron-formation minerals, oil-spill bioremediation, bioleaching of mine tailings, and sulfate-reducing bacteria treating acid mine drainage.",
+    "overview": "These experiments explored how microbes drive geochemical change. Two looked at Earth's history and resource recovery; the other two looked at cleaning up contamination.",
+    "did": [
+      {
+        "text": "Banded iron formations: added ferrous iron to cyanobacteria cultures to mimic hydrothermal vents, and saw iron-oxyhydroxide minerals form at the cell walls.",
+        "sub": []
+      },
+      {
+        "text": "Oil-spill beach: built a simulated contaminated beach and confirmed hydrocarbon-degrading bacteria under the microscope.",
+        "sub": []
+      },
+      {
+        "text": "Bioleaching: ran a syringe column of mine tailings with iron- and sulfur-oxidising bacteria and analysed the leachate for metals by ICP-OES.",
+        "sub": []
+      },
+      {
+        "text": "Acid mine drainage: ran a 4-week leaching column with sulfate-reducing bacteria, tracking effluent pH and sulfur.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Sulfate-reducing bacteria significantly lowered sulfur concentrations in the acid-mine-drainage effluent.",
+        "sub": []
+      },
+      {
+        "text": "The bioleaching leachate confirmed that metals were being extracted, and also showed the risk of creating acid mine drainage.",
+        "sub": []
+      },
+      {
+        "text": "Each report also discusses honestly what went wrong. For example, the sample in the oil-spill test was too weak to fully clean up the spill.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "cover",
+      "gallery": [
+        "gallery-1.jpg",
+        "gallery-2.jpg"
+      ]
+    }
+  },
+  {
+    "slug": "arcgis-mapping-series",
+    "title": "ArcGIS Mapping Series",
+    "featured": false,
+    "year": "2022–23",
+    "yearGroup": "Year 3",
+    "tagline": "Six applied GIS projects, from precipitation mapping to pollution-source tracing and landslide risk.",
+    "context": "Fall 2022 · EARTH 342 (GIS for Earth Sciences)",
+    "role": "",
+    "team": "Arman Kanorwalla & Aryan Makar",
+    "tags": [
+      "GIS & Remote Sensing"
+    ],
+    "tools": "ArcGIS Pro, geodatabases, symbology and cartography, spatial joins, structural data plotting, Landsat basemaps",
+    "summary": "Applied ArcGIS projects covering Ontario precipitation versus latitude, mining claims near Lake Temagami, a geological map from structural data, groundwater pollution-source tracing, and landslide susceptibility.",
+    "overview": "A hands-on series in which each lab solved an earth-science problem with GIS and produced a finished map layout.",
+    "did": [
+      {
+        "text": "Ontario precipitation (2005): a classified precipitation map plus a precipitation-versus-latitude chart.",
+        "sub": []
+      },
+      {
+        "text": "Mining claims: mapped existing and new claims, township and property boundaries for a gold company.",
+        "sub": []
+      },
+      {
+        "text": "Geologic mapping: built a geologic map from a scanned GSC sheet and a structural-data CSV.",
+        "sub": []
+      },
+      {
+        "text": "Groundwater pollution: traced a contamination source over a Landsat basemap.",
+        "sub": []
+      },
+      {
+        "text": "Landslide susceptibility: analysis and map.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A set of publication-style maps showing cartography, data integration and spatial analysis.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "impact-assessment-policy",
+    "title": "Environmental Assessment Policy: IAA Briefing Note and Highway 413 Review",
+    "featured": false,
+    "year": "2022–23",
+    "yearGroup": "Year 3",
+    "tagline": "Policy writing that holds Canada's Impact Assessment Act and a major Ontario highway project to account.",
+    "context": "Fall 2022 · ERS 215",
+    "role": "Sole author",
+    "team": "",
+    "tags": [
+      "Environmental Policy"
+    ],
+    "tools": "Policy analysis, briefing-note format, the UN Sustainable Development Goals, Impact Assessment Agency of Canada documents",
+    "summary": "A ministerial briefing note on aligning Canada's Impact Assessment Act with the UN SDGs, and a formal public comment raising groundwater, species-at-risk and climate concerns about Ontario's Highway 413.",
+    "overview": "Two pieces of applied environmental-policy writing. The briefing note compares the Impact Assessment Act (2019) with the UN Sustainable Development Goals and gives the federal Environment Minister options with their trade-offs. The public comment argues that the federal analysis of Highway 413 (the GTA West project) underweighted several impacts.",
+    "did": [
+      {
+        "text": "Evaluated two reform options: an elected Indigenous advisory body, or replacing single-minister decisions with a multi-stakeholder review panel.",
+        "sub": []
+      },
+      {
+        "text": "Recommended the review panel as the faster, lower-cost route to SDG alignment and better Indigenous representation.",
+        "sub": []
+      },
+      {
+        "text": "In the Highway 413 comment, flagged 95 watercourse crossings, groundwater contamination risk, 8 federally listed migratory bird species at risk, at-risk fish, and climate impacts.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Two clear, referenced policy documents written for decision-makers.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": null
+  },
+  {
+    "slug": "bancroft-skarn-grenville",
+    "title": "Skarns of the Grenville Province: Bancroft Outcrop Study",
+    "featured": false,
+    "year": "2021–22",
+    "yearGroup": "Year 2",
+    "tagline": "Pieced together a billion-year tectonic story behind a skarn outcrop near Bancroft, Ontario.",
+    "context": "Fall 2021 · EARTH 231 (Mineralogy) · group paper and presentation",
+    "role": "",
+    "team": "Group 9: Harry Barnes, Noel Campfens, Blue Ketchum, Arman Kanorwalla",
+    "tags": [
+      "Field Geology",
+      "Mineral Exploration"
+    ],
+    "tools": "Outcrop description, geologic map interpretation, literature synthesis",
+    "summary": "A group paper and presentation on skarn formation at Bancroft-area outcrops. I wrote the Grenville Province's tectonic history and placed our outcrop in the Elsonian–Elzevirian metasedimentary belt.",
+    "overview": "Skarns form where magma alters carbonate rocks through contact metamorphism and metasomatism. Our group described a skarn outcrop near Bancroft, built a local geologic map, and explained its origin within the Grenville Province, the last major tectonic event to shape the Canadian Shield.",
+    "did": [
+      {
+        "text": "Wrote the geologic history of the Grenville Province, from the Makkovikian and Labradorian events through to the Grenvillian orogeny (about 1.9 to 1.0 billion years ago).",
+        "sub": []
+      },
+      {
+        "text": "Wrote the history of our outcrop, linking it to rift-basin sedimentation and later thrusting during the collision with Amazonia.",
+        "sub": []
+      },
+      {
+        "text": "Built the history section of the presentation.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A complete paper and slide deck tying mineral observations to regional tectonics.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": {
+      "fit": "contain",
+      "gallery": []
+    }
+  },
+  {
+    "slug": "field-hydrology-labs",
+    "title": "Field Hydrology: Measuring Water in the Field",
+    "featured": false,
+    "year": "2021–22",
+    "yearGroup": "Year 2",
+    "tagline": "Hands-on hydrology at Columbia Lake and around Waterloo, covering seepage, rainfall, streamflow and water quality.",
+    "context": "Fall 2021 · EARTH 223",
+    "role": "",
+    "team": "Lab group 1 (section 004)",
+    "tags": [
+      "Groundwater & Hydrology"
+    ],
+    "tools": "Seepage meters, tipping-bucket rain gauges, piezometers, stream gauging, water-balance calculations, Excel",
+    "summary": "Five field labs that measured groundwater–surface water exchange, rainfall events, streamflow and water quality, then turned the raw field data into fluxes, water balances and interpretations.",
+    "overview": "My first real field hydrology. Each lab began with field measurements and ended with calculations and interpretation in Excel.",
+    "did": [
+      {
+        "text": "Calculated seepage-meter fluxes along a stream and showed it was a gaining stream.",
+        "sub": []
+      },
+      {
+        "text": "Analysed weather-station rainfall records, including the limits of tipping-bucket resolution.",
+        "sub": []
+      },
+      {
+        "text": "Interpreted piezometer and well data for groundwater–surface water interaction.",
+        "sub": []
+      },
+      {
+        "text": "Built a stream-gauge water balance.",
+        "sub": []
+      },
+      {
+        "text": "Ran a water-quality assessment at Mannheim.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "Five completed datasets and reports. This was the foundation for my later groundwater work.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": null
+  },
+  {
+    "slug": "ontario-3d-geology-stratigraphy",
+    "title": "Ontario's Bedrock in 3D: Stratigraphy Lab Series",
+    "featured": false,
+    "year": "2021–22",
+    "yearGroup": "Year 2",
+    "tagline": "Explored Ontario's Paleozoic bedrock with a 3D digital geological model.",
+    "context": "Fall 2021 · EARTH 235 (Stratigraphy & Earth History)",
+    "role": "Individual",
+    "team": "",
+    "tags": [
+      "Field Geology",
+      "GIS & Remote Sensing"
+    ],
+    "tools": "3D geological model of Ontario's Paleozoic bedrock, geologic maps, litho-, bio- and chronostratigraphy",
+    "summary": "A lab series ending in a 3D tour of Ontario's Paleozoic bedrock. I used a digital geological model to test how unconformities and rock units really vary below ground compared with standard charts.",
+    "overview": "These labs built from reading geologic maps of Canada, through stratigraphic principles, to a 3D digital model of Ontario's Paleozoic bedrock. The model was developed by University of Waterloo Earth Science students.",
+    "did": [
+      {
+        "text": "Interpreted geologic maps and the geologic map of Canada.",
+        "sub": []
+      },
+      {
+        "text": "Built litho-, bio- and chronostratigraphic correlations.",
+        "sub": []
+      },
+      {
+        "text": "Used the 3D model to examine the late Ordovician to early Silurian disconformity (around the Queenston Formation) and showed it is less uniform than the lithostratigraphic chart suggests.",
+        "sub": []
+      }
+    ],
+    "outcomes": [
+      {
+        "text": "A grounding in stratigraphy and 3D subsurface visualisation that carried into my later mapping work.",
+        "sub": []
+      }
+    ],
+    "related": "",
+    "image": null
+  }
+]

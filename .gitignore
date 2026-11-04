@@ -30,3 +30,8 @@ env/
 *.pyc
 __pycache__/
 .playwright-mcp/
+
+# Raw course files contain student IDs: never commit
+projects_selected.zip
+projects/
+*.zip

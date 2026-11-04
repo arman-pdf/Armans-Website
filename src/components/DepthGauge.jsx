@@ -32,7 +32,7 @@ export default function DepthGauge() {
   return (
     <div
       aria-hidden="true"
-      className="hidden min-[1500px]:block fixed right-8 top-1/2 -translate-y-1/2 z-30 h-56 w-px bg-current opacity-70 font-mono text-[11px] tnum text-paper mix-blend-difference pointer-events-none"
+      className="hidden min-[1500px]:block fixed right-8 top-1/2 -translate-y-1/2 z-30 h-56 w-px bg-flag/70 font-mono text-[11px] tnum text-flag pointer-events-none"
     >
       <div ref={tick} className="absolute left-0 top-0 h-full w-px" style={{ willChange: 'transform' }}>
         <div className="absolute -left-[5px] -top-px h-px w-[11px] bg-flag" />

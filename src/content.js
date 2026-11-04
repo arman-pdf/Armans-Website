@@ -1,4 +1,5 @@
 // All site copy lives here. Presentation lives in components.
+import projectData from './projects.json';
 
 export const profile = {
   name: 'Arman Kanorwalla',
@@ -127,85 +128,5 @@ export const education = {
 export const projectsIntro =
   'A selection of academic and professional projects spanning environmental assessment, geological mapping, and data analysis.';
 
-// Placeholder list: replaced with Arman's picks in step 8b.
-export const projects = [
-  {
-    slug: 'skarn-grenville',
-    title: 'Skarn Formation Field Study - Grenville Province',
-    brief: 'Field mapping and mineralogical analysis of skarn deposits in the Grenville Province',
-    detailed: `Led comprehensive field study examining skarn formation processes in the Grenville Province (44°54'57.4"N 78°04'38.4"W). Conducted detailed geological mapping identifying granite intrusions and marble units with diverse mineral compositions including tremolite, wollastonite, and phlogopite. Analyzed contact metamorphism and metasomatism processes where plutonic intrusions transformed limestone-rich environments into marble with distinct skarn minerals.`,
-    tags: ['Field Mapping', 'Mineralogy', 'Petrology', 'Structural Geology'],
-  },
-  {
-    slug: 'water-quality-uw',
-    title: 'Water Quality Assessment - University of Waterloo',
-    brief: 'Water quality assessment of local sources around University of Waterloo campus',
-    detailed:
-      'Developed a comprehensive assessment of water quality from local sources around the University of Waterloo. Drafted a detailed report comparing analytical results to Canadian drinking water standards. Proposed alternate local sources as potential sources of drinking water based on quality assessment findings.',
-    tags: ['Water Quality', 'Environmental Assessment', 'Canadian Standards'],
-  },
-  {
-    slug: 'geomorphology-labs',
-    title: 'Geomorphology Laboratory Studies',
-    brief: 'GIS-based geological mapping using satellite imagery and aerial photography',
-    detailed:
-      'Utilized satellite images, air photos, and ArcGIS to create detailed geologic maps. Completed a comprehensive assessment report for a mineral exploration company using GIS analysis and spatial data interpretation.',
-    tags: ['ArcGIS', 'Remote Sensing', 'Geological Mapping'],
-  },
-  {
-    slug: 'ontario-3d-bedrock',
-    title: 'Ontario 3D Bedrock Geology Study',
-    brief: "3D geological modeling and interpretation of Ontario's bedrock using LeapFrog software",
-    detailed:
-      'Thoroughly studied the bedrock geology of Ontario through 3D geology software (LeapFrog), creating detailed three-dimensional geological models. Made interpretations and correlations to bedrock formation processes across the province.',
-    tags: ['3D Modeling', 'LeapFrog', 'Bedrock Geology'],
-  },
-  {
-    slug: 'sustainability-framework',
-    title: 'Environmental and Sustainability Assessment Framework',
-    brief: 'Development of sustainability assessment framework for Canadian environmental processes',
-    detailed:
-      'Created a comprehensive assessment focusing on the purposes and design of environmental assessment processes, with specific reference to Canadian federal and Ontario provincial legal mandates. Developed a framework that evolved into a sustainability assessment tool.',
-    tags: ['Environmental Assessment', 'Sustainability', 'Policy Analysis'],
-  },
-  {
-    slug: 'abitau-lake',
-    title: 'Quaternary Geology & Geochemical Analysis - Abitau Lake, NWT',
-    brief: 'Geological assessment analysing Quaternary deposits, glacial landforms, and geochemical mapping',
-    detailed:
-      'Conducted a geological assessment of the Abitau Lake area, analysing Quaternary deposits, glacial landforms, and surficial geology using GIS and remote sensing to reconstruct past glacial movements. Performed geochemical analysis using ICP-MS data from lake sediment samples.',
-    tags: ['GIS', 'Remote Sensing', 'Quaternary Geology', 'ICP-MS'],
-  },
-  {
-    slug: 'mineral-deposits',
-    title: 'Mineral Deposits Laboratory and Exploration Project',
-    brief: 'Petrographic and geochemical analysis of polymetallic ore samples (Au, Ni-Cu-PGE)',
-    detailed:
-      'Performed petrographic and geochemical analysis of polymetallic ore samples using techniques such as RL microscopy, fire assay, and QA/QC to evaluate mineralogy and economic potential. Co-authored an NI 43-101 style technical exploration report for a greenstone-hosted gold deposit.',
-    tags: ['Ore Mineralogy', 'RL Microscopy', 'NI 43-101'],
-  },
-  {
-    slug: 'groundwater-trends-thesis',
-    title: 'Groundwater Trends Thesis Proposal',
-    brief: 'Python-based time series analysis to assess groundwater trends and drought vulnerability',
-    detailed:
-      'Developed a thesis proposal to assess long-term groundwater level trends and drought vulnerability using Python-based time series analysis (Pastas) and hydrogeological indicators like the Standardised Groundwater Index (SGI).',
-    tags: ['Python', 'Pastas', 'Time Series Analysis', 'Hydrology'],
-  },
-  {
-    slug: 'remediation-geochemistry',
-    title: 'Applied Environmental Remediation & Geochemistry Projects',
-    brief: 'Microbially mediated geochemical processes including bioremediation of Acid Mine Drainage',
-    detailed:
-      'Investigated microbially mediated geochemical processes through four laboratory projects, including bioremediation of Acid Mine Drainage using sulfate-reducing bacteria, bioleaching of mine tailings, and hydrocarbon degradation in contaminated soils.',
-    tags: ['Bioremediation', 'Acid Mine Drainage', 'Geomicrobiology'],
-  },
-  {
-    slug: 'glacial-field-guide',
-    title: 'Quaternary Glacial Geology Field Guide',
-    brief: 'Field guide documenting Catfish Creek Till, Waterloo Moraine, and regional glacial features',
-    detailed:
-      'Compiled a multi-part field trip guidebook investigating Quaternary glacial and post-glacial environments across the Waterloo and Cambridge region. Documented key stops including Grand River erosional banks, Conestogo Lake sections, and the Paris–Galt Moraine.',
-    tags: ['Quaternary Geology', 'Glacial Geology', 'Field Mapping'],
-  },
-];
+// Imported from PORTFOLIO_PROJECTS.md by scripts/import-projects.mjs. Edit the markdown, then re-run the script.
+export const projects = projectData;

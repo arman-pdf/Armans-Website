@@ -4,15 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: 'var(--paper)',
-        ink: 'var(--ink)',
-        'ink-2': 'var(--ink-2)',
-        'ink-3': 'var(--ink-3)',
-        rule: 'var(--rule)',
-        deep: 'var(--deep)',
-        'deep-2': 'var(--deep-2)',
-        flag: 'var(--flag)',
-        'flag-ink': 'var(--flag-ink)',
+        paper: 'rgb(var(--paper-rgb) / <alpha-value>)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
+        'ink-2': 'rgb(var(--ink-2-rgb) / <alpha-value>)',
+        'ink-3': 'rgb(var(--ink-3-rgb) / <alpha-value>)',
+        rule: 'rgb(var(--rule-rgb) / <alpha-value>)',
+        deep: 'rgb(var(--deep-rgb) / <alpha-value>)',
+        'deep-2': 'rgb(var(--deep-2-rgb) / <alpha-value>)',
+        flag: 'rgb(var(--flag-rgb) / <alpha-value>)',
+        'flag-ink': 'rgb(var(--flag-ink-rgb) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Bricolage Grotesque Variable"', 'system-ui', 'sans-serif'],

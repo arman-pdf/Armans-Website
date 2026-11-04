@@ -18,7 +18,7 @@ export default function Nav() {
     `text-sm transition-colors hover:text-flag-ink ${isActive ? 'text-ink underline decoration-flag decoration-2 underline-offset-[10px]' : 'text-ink-2'}`;
 
   return (
-    <header className="sticky top-0 z-40 bg-paper/95 border-b border-rule">
+    <header className="sticky top-0 z-40 bg-paper border-b border-rule">
       <div className="mx-auto max-w-[1180px] px-5 md:px-8 h-14 flex items-center justify-between">
         <Link to="/" className="font-display font-bold text-lg tracking-[-0.01em] text-ink">
           {profile.name}

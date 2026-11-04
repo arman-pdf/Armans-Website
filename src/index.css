@@ -3,15 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --paper: #eee8da;
-  --ink: #15201a;
-  --ink-2: #454d44;
-  --ink-3: #5f665c;
-  --rule: #d3ccbb;
-  --deep: #12201a;
-  --deep-2: #1b2d25;
-  --flag: #e8501c; /* survey flagging orange: fills, marks, never small text */
-  --flag-ink: #b93a0e; /* same hue, readable as text on paper */
+  /* RGB channels so Tailwind opacity modifiers (text-paper/70) work */
+  --paper-rgb: 238 232 218;
+  --ink-rgb: 21 32 26;
+  --ink-2-rgb: 69 77 68;
+  --ink-3-rgb: 95 102 92;
+  --rule-rgb: 211 204 187;
+  --deep-rgb: 18 32 26;
+  --deep-2-rgb: 27 45 37;
+  --flag-rgb: 232 80 28; /* survey flagging orange: fills, marks, never small text */
+  --flag-ink-rgb: 185 58 14; /* same hue, readable as text on paper */
+
+  --paper: rgb(var(--paper-rgb));
+  --ink: rgb(var(--ink-rgb));
+  --ink-2: rgb(var(--ink-2-rgb));
+  --ink-3: rgb(var(--ink-3-rgb));
+  --rule: rgb(var(--rule-rgb));
+  --deep: rgb(var(--deep-rgb));
+  --deep-2: rgb(var(--deep-2-rgb));
+  --flag: rgb(var(--flag-rgb));
+  --flag-ink: rgb(var(--flag-ink-rgb));
 }
 
 html {
