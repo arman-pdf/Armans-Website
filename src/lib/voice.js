@@ -1,34 +1,37 @@
-// Spoken answers. Two engines, same interface:
-//   HighQualityVoice: Kyutai Pocket TTS running in the visitor's browser (opt-in ~125 MB download, cached)
-//   BrowserVoice:     the browser's built-in speechSynthesis (instant, no download)
+// Spoken answers for the call. Two engines, same interface:
+//   HighQualityVoice: Kyutai Pocket TTS running in the visitor's browser. The model files (~125 MB)
+//                     are fetched quietly in the background on capable desktops, then kept in the
+//                     browser's cache. The speech engine itself only starts when a call does.
+//   BrowserVoice:     the browser's built-in speechSynthesis (instant, no download). Used on phones,
+//                     data-saver connections, or if the natural voice cannot run.
 // Nothing here talks to our server: the answer text is already on the page.
 
 const FADE = 480;
 const SLOW_BELOW = 0.95; // speech slower than real time stutters: fall back
 const SLOW_AFTER_CHUNKS = 4;
-export const VOICES = [
-  { id: 'marius', label: 'Voice 1' },
-  { id: 'javert', label: 'Voice 2' },
-];
-const DEFAULT_VOICE = 'marius';
+const VOICE = 'marius';
 // Built at runtime so Vite leaves these self-hosted /public files alone.
 const asset = (path) => new URL(path, window.location.origin).href;
 
 export function voiceSupport() {
-  const hasAudio = typeof window !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
+  const hasAudio = !!(window.AudioContext || window.webkitAudioContext);
   const conn = navigator.connection;
+  const capable =
+    hasAudio &&
+    typeof WebAssembly === 'object' &&
+    window.isSecureContext &&
+    'caches' in window &&
+    typeof AudioWorkletNode !== 'undefined' &&
+    !conn?.saveData &&
+    (navigator.deviceMemory === undefined || navigator.deviceMemory >= 4);
   return {
     builtin: 'speechSynthesis' in window,
-    // High quality needs WebAssembly, AudioWorklet, Cache Storage, a secure page, and a real computer.
-    highQuality:
-      hasAudio &&
-      typeof WebAssembly === 'object' &&
-      !!window.isSecureContext &&
-      'caches' in window &&
-      typeof AudioWorkletNode !== 'undefined' &&
+    highQuality: !!capable,
+    // Download in the background only where it is clearly fine: a desktop-sized screen on a fast connection.
+    autoDownload:
+      !!capable &&
       window.matchMedia('(min-width: 900px)').matches &&
-      !conn?.saveData &&
-      (navigator.deviceMemory === undefined || navigator.deviceMemory >= 4),
+      (conn?.effectiveType === undefined || conn.effectiveType === '4g'),
     recognition: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
   };
 }
@@ -41,9 +44,9 @@ export function speakable(text, projects = []) {
     .replace(/\bsee\s+\/projects\/[a-z0-9-]+/gi, '')
     .replace(/\/projects\/([a-z0-9-]+)/g, (_, slug) => titleOf(slug) ?? 'the project page')
     .replace(/\/work\b/g, 'the experience page')
-    .replace(/[\u2010-\u2015]/g, '-') // fancy hyphens and dashes
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[‐-―]/g, '-') // fancy hyphens and dashes
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
     .replace(/[≈~]/g, 'about ')
     .replace(/%/g, ' percent')
     .replace(/\s*&\s*/g, ' and ')
@@ -103,53 +106,79 @@ export class HighQualityVoice {
     this.ctx = null;
     this.player = null;
     this.worker = null;
-    this.ready = false;
-    this.loading = null;
+    this.ready = false; // engine running, can speak
+    this.cached = false; // model files stored in the browser
     this.onProgress = () => {};
     this.onSlow = () => {};
+    this._pending = {};
+    this._prefetching = null;
+    this._loading = null;
     this._done = null;
     this._rtf = [];
     this._speaking = false;
-    this.voice = DEFAULT_VOICE;
     this._buf = null;
   }
 
-  // Loudness of what is playing right now, 0..1 (for the visuals).
-  getLevel() {
-    const an = this.player?.analyser;
-    if (!an || !this._speaking) return 0;
-    this._buf ??= new Uint8Array(an.fftSize);
-    an.getByteTimeDomainData(this._buf);
-    let sum = 0;
-    for (let i = 0; i < this._buf.length; i++) { const v = (this._buf[i] - 128) / 128; sum += v * v; }
-    return Math.min(1, Math.sqrt(sum / this._buf.length) * 4);
+  /* worker plumbing */
+
+  _worker() {
+    if (!this.worker) {
+      this.worker = new Worker(asset('/tts/inference-worker.js?v=2'), { type: 'module' });
+      this.worker.onmessage = (e) => this._dispatch(e.data);
+      this.worker.onerror = (e) => this._reject(new Error(e.message || 'Voice worker failed'));
+    }
+    return this.worker;
   }
 
-  // Switch between the shipped voices. Safe to call before or after load.
-  async setVoice(id) {
-    if (!VOICES.some((v) => v.id === id) || id === this.voice) return;
-    this.voice = id;
-    if (!this.ready) return;
-    await new Promise((resolve) => {
-      const prev = this.worker.onmessage;
-      this.worker.onmessage = (e) => {
-        if (e.data.type === 'voice_set' || e.data.type === 'error') { this.worker.onmessage = prev; resolve(); }
-        else prev(e);
-      };
-      this.worker.postMessage({ type: 'set_voice', data: { voiceName: id } });
-    });
+  _wait(kind) {
+    return new Promise((resolve, reject) => { this._pending[kind] = { resolve, reject }; });
   }
 
-  // Must be called from a click or keypress (browsers block audio otherwise).
+  _reject(err) {
+    const waiting = Object.values(this._pending);
+    this._pending = {};
+    if (waiting.length) waiting.forEach((p) => p.reject(err));
+    else console.error('[voice]', err);
+  }
+
+  _dispatch(m) {
+    switch (m.type) {
+      case 'download_progress': this.onProgress(m.loaded, m.total); break;
+      case 'prefetched': this._pending.prefetched?.resolve(); delete this._pending.prefetched; break;
+      case 'loaded': this._pending.loaded?.resolve(); delete this._pending.loaded; break;
+      case 'error':
+        this._reject(new Error(String(m.error)));
+        this.stop();
+        break;
+      case 'audio_chunk': this._chunk(m.data, m.metrics); break;
+      case 'stream_ended': this.player?.notifyStreamEnded?.(); break;
+      default: break;
+    }
+  }
+
+  /* loading */
+
+  // Quietly download and store the model files. Does not start the speech engine, so it is cheap on memory.
+  prefetch() {
+    if (this.cached || this.ready) return Promise.resolve();
+    this._prefetching ??= (async () => {
+      const wait = this._wait('prefetched');
+      this._worker().postMessage({ type: 'prefetch' });
+      await wait;
+      this.cached = true;
+    })().catch((e) => { this._prefetching = null; throw e; });
+    return this._prefetching;
+  }
+
+  // Start the speech engine. Must be called from a click or keypress (browsers block audio otherwise).
   load() {
     if (this.ready) return this.unlock().then(() => this);
-    if (this.loading) return this.loading;
-    this.loading = this._load().catch((e) => {
-      this.loading = null;
+    this._loading ??= this._load().catch((e) => {
+      this._loading = null;
       this.dispose();
       throw e;
     });
-    return this.loading;
+    return this._loading;
   }
 
   async _load() {
@@ -160,20 +189,11 @@ export class HighQualityVoice {
     this.player = new PCMPlayerWorklet(this.ctx, { minBufferBeforePlaybackMs: 700 }); // a little head start avoids gaps
     this.player.addEventListener('audioEnded', () => this._finish());
 
-    this.worker = new Worker(asset('/tts/inference-worker.js?v=1'), { type: 'module' });
-    await new Promise((resolve, reject) => {
-      this.worker.onmessage = (e) => {
-        const m = e.data;
-        if (m.type === 'download_progress') this.onProgress(m.loaded, m.total);
-        else if (m.type === 'loaded') resolve();
-        else if (m.type === 'error') reject(new Error(String(m.error)));
-        else this._onMessage(m);
-      };
-      this.worker.onerror = (e) => reject(new Error(e.message || 'Voice worker failed'));
-      this.worker.postMessage({ type: 'load' });
-    });
-    this.worker.onmessage = (e) => this._onMessage(e.data);
+    const wait = this._wait('loaded');
+    this._worker().postMessage({ type: 'load' });
+    await wait;
     this.ready = true;
+    this.cached = true;
     return this;
   }
 
@@ -181,13 +201,17 @@ export class HighQualityVoice {
     if (this.ctx?.state === 'suspended') await this.ctx.resume();
   }
 
-  _onMessage(m) {
-    if (m.type === 'audio_chunk') return this._chunk(m.data, m.metrics);
-    if (m.type === 'stream_ended') return this.player?.notifyStreamEnded?.();
-    if (m.type === 'error') {
-      console.error('[voice]', m.error);
-      this.stop();
-    }
+  /* speaking */
+
+  // Loudness of what is playing right now, 0..1 (for the visuals).
+  getLevel() {
+    const an = this.player?.analyser;
+    if (!an || !this._speaking) return 0;
+    this._buf ??= new Uint8Array(an.fftSize);
+    an.getByteTimeDomainData(this._buf);
+    let sum = 0;
+    for (let i = 0; i < this._buf.length; i++) { const v = (this._buf[i] - 128) / 128; sum += v * v; }
+    return Math.min(1, Math.sqrt(sum / this._buf.length) * 4);
   }
 
   _chunk(data, metrics) {
@@ -217,7 +241,7 @@ export class HighQualityVoice {
     this._speaking = true;
     return new Promise((resolve) => {
       this._done = resolve;
-      this.unlock().then(() => this.worker.postMessage({ type: 'generate', data: { text, voice: this.voice } }));
+      this.unlock().then(() => this.worker.postMessage({ type: 'generate', data: { text, voice: VOICE } }));
     });
   }
 
@@ -239,16 +263,9 @@ export class HighQualityVoice {
     this.ctx?.close().catch(() => {});
     this.worker = this.player = this.ctx = null;
     this.ready = false;
+    this._loading = null;
+    this._prefetching = null;
     this._finish();
     singleton = null;
-  }
-}
-
-// Has the voice been downloaded before? (Then enabling it needs no big download.)
-export async function highQualityVoiceIsCached() {
-  try {
-    return (await caches.keys()).some((k) => k.startsWith('pocket-tts-'));
-  } catch {
-    return false;
   }
 }

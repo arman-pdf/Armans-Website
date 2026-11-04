@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useCallback, useEffect, useId, useMemo, useRef, 
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { ask } from '../lib/askStream';
-import { BrowserVoice, VOICES, getHighQualityVoice, speakable, voiceSupport } from '../lib/voice';
+import { BrowserVoice, getHighQualityVoice, speakable, voiceSupport } from '../lib/voice';
 import { setCallActive } from '../lib/callStore';
 import { setLevelSource, startMicMeter } from '../lib/level';
 import CallButton from './CallButton';
@@ -18,8 +18,6 @@ const SUGGESTIONS = [
 ];
 const MAX_QUESTIONS = 12;
 const SLUGS = new Set(projects.map((p) => p.slug));
-const MODE_KEY = 'ak-voice-mode';
-const VOICE_KEY = 'ak-voice-id';
 const MB = (n) => (n / 1e6).toFixed(0);
 
 const ERRORS = {
@@ -40,9 +38,6 @@ const MIC_ERRORS = {
 };
 const FATAL_MIC = new Set(['not-allowed', 'service-not-allowed', 'audio-capture', 'network']);
 
-const read = (key, fallback) => { try { return localStorage.getItem(key) || fallback; } catch { return fallback; } };
-const write = (key, value) => { try { localStorage.setItem(key, value); } catch { /* private mode: fine */ } };
-
 // Turn "/projects/some-slug" and "/work" in an answer into real links.
 function renderAnswer(text, linkClass) {
   return text.split(/(\/projects\/[a-z0-9-]+|\/work\b)/g).map((part, i) => {
@@ -62,20 +57,10 @@ export default function Assistant({ tone = 'deep' }) {
   const [turns, setTurns] = useState([]); // { q, a, error? }
   const [value, setValue] = useState('');
   const [busy, setBusy] = useState(false);
-
-  const [mode, setModeState] = useState(() => {
-    const m = read(MODE_KEY, 'off');
-    if (m === 'hq' && !support.highQuality) return support.builtin ? 'builtin' : 'off';
-    if (m === 'builtin' && !support.builtin) return 'off';
-    return m;
-  });
-  const [voiceId, setVoiceId] = useState(() => (VOICES.some((v) => v.id === read(VOICE_KEY, '')) ? read(VOICE_KEY, '') : VOICES[0].id));
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [hq, setHq] = useState({ state: 'idle', loaded: 0, total: 0 }); // idle | downloading | ready | error
-  const [speaking, setSpeaking] = useState(false);
   const [notice, setNotice] = useState('');
+  const [download, setDownload] = useState({ loaded: 0, total: 0 });
 
-  const [call, setCallState] = useState('idle'); // idle | connecting | listening | thinking | speaking
+  const [call, setCall] = useState('idle'); // idle | connecting | listening | thinking | speaking
   const [heard, setHeard] = useState('');
   const [stageSlot, setStageSlot] = useState(null);
 
@@ -85,17 +70,12 @@ export default function Assistant({ tone = 'deep' }) {
   const meterRef = useRef(null);
   const callOn = useRef(false);
   const browserVoice = useRef(new BrowserVoice());
-  const hqRef = useRef(null); // HighQualityVoice instance
-  const modeRef = useRef(mode);
-  modeRef.current = mode;
-  const voiceRef = useRef(voiceId);
-  voiceRef.current = voiceId;
-  const setCall = (s) => setCallState(s);
+  const engineRef = useRef(null); // the natural voice, once it is running
+  const naturalFailed = useRef(false);
 
   const stopSpeaking = useCallback(() => {
     browserVoice.current.stop();
-    hqRef.current?.stop();
-    setSpeaking(false);
+    engineRef.current?.stop();
   }, []);
 
   const endCall = useCallback((message) => {
@@ -107,7 +87,7 @@ export default function Assistant({ tone = 'deep' }) {
     meterRef.current?.stop?.();
     meterRef.current = null;
     setLevelSource(null);
-    setCallState('idle');
+    setCall('idle');
     setHeard('');
     setBusy(false);
     setCallActive(false);
@@ -123,79 +103,42 @@ export default function Assistant({ tone = 'deep' }) {
     setLevelSource(null);
     setCallActive(false);
     browserVoice.current.stop();
-    hqRef.current?.stop();
+    engineRef.current?.stop();
   }, []);
   useEffect(() => { if (busy) endRef.current?.scrollIntoView({ block: 'nearest' }); }, [turns, busy]);
 
-  const setMode = (m) => { setModeState(m); write(MODE_KEY, m); };
+  /* ------------- natural voice: quiet background download on capable desktops ------------- */
 
-  /* ----------------------------- natural voice ----------------------------- */
-
-  const loadHq = useCallback(async () => {
-    const engine = getHighQualityVoice();
-    hqRef.current = engine;
-    engine.onProgress = (loaded, total) => setHq({ state: 'downloading', loaded, total });
-    engine.onSlow = (rtf) => {
-      engine.dispose();
-      hqRef.current = null;
-      setHq({ state: 'idle', loaded: 0, total: 0 });
-      setSpeaking(false);
-      setNotice(`This computer is too slow for the natural voice (${rtf.toFixed(1)}x real time), so I switched to your browser's voice.`);
-      setMode(support.builtin ? 'builtin' : 'off');
+  const watchProgress = useCallback((engine) => {
+    let lastPaint = 0;
+    engine.onProgress = (loaded, total) => {
+      const now = performance.now();
+      if (now - lastPaint > 150 || loaded >= total) { lastPaint = now; setDownload({ loaded, total }); }
     };
-    setHq((h) => (h.state === 'ready' ? h : { state: 'downloading', loaded: 0, total: 0 }));
-    try {
-      await engine.load();
-      await engine.setVoice(voiceRef.current);
-      setHq({ state: 'ready', loaded: 0, total: 0 });
-      return engine;
-    } catch (e) {
-      console.error('[voice]', e);
-      setHq({ state: 'error', loaded: 0, total: 0 });
-      setNotice("The natural voice could not be loaded, so I'm using your browser's voice instead.");
-      setMode(support.builtin ? 'builtin' : 'off');
-      return null;
-    }
-  }, [support.builtin]);
+    engine.onSlow = (rtf) => {
+      naturalFailed.current = true;
+      engine.dispose();
+      engineRef.current = null;
+      setNotice(`This computer is too slow for the natural voice (${rtf.toFixed(1)}x real time), so I switched to your browser's voice.`);
+    };
+  }, []);
 
-  const chooseMode = async (m) => {
-    stopSpeaking();
-    setNotice('');
-    setMode(m);
-    if (m === 'hq') await loadHq(); // runs inside the click, so the browser allows audio
-  };
-
-  const chooseVoice = async (id) => {
-    setVoiceId(id);
-    write(VOICE_KEY, id);
-    await hqRef.current?.setVoice?.(id);
-  };
-
-  /* ------------------------------ speaking ------------------------------- */
-
-  const speakAnswer = useCallback(async (answer, { call: inCall = false } = {}) => {
-    const m = modeRef.current;
-    if (m === 'off' || !answer) return;
-    const text = speakable(answer, projects);
-    setSpeaking(true);
-    try {
-      if (m === 'hq') {
-        const engine = hqRef.current?.ready ? hqRef.current : await loadHq();
-        if (engine && modeRef.current === 'hq') {
-          if (inCall) setLevelSource(() => engine.getLevel());
-          await engine.speak(text);
-        } else if (modeRef.current === 'builtin') {
-          if (inCall) setLevelSource(() => browserVoice.current.getLevel());
-          await browserVoice.current.speak(text);
-        }
-      } else {
-        if (inCall) setLevelSource(() => browserVoice.current.getLevel());
-        await browserVoice.current.speak(text);
-      }
-    } finally {
-      setSpeaking(false);
-    }
-  }, [loadHq]);
+  useEffect(() => {
+    if (!support.autoDownload) return undefined;
+    let cancelled = false;
+    const start = () => {
+      if (cancelled || document.visibilityState !== 'visible') return;
+      const engine = getHighQualityVoice();
+      watchProgress(engine);
+      engine.prefetch().catch((e) => console.warn('[voice] background download skipped:', e.message));
+    };
+    // Wait until the page has finished loading and the browser is idle, so it never competes with the site.
+    const idle = () => ('requestIdleCallback' in window ? window.requestIdleCallback(start, { timeout: 8000 }) : setTimeout(start, 3000));
+    const onLoad = () => setTimeout(idle, 2500);
+    if (document.readyState === 'complete') onLoad();
+    else window.addEventListener('load', onLoad, { once: true });
+    return () => { cancelled = true; window.removeEventListener('load', onLoad); };
+  }, [support.autoDownload, watchProgress]);
 
   /* -------------------------------- asking -------------------------------- */
 
@@ -229,7 +172,6 @@ export default function Assistant({ tone = 'deep' }) {
     } finally {
       setBusy(false);
     }
-    if (answer && !inCall) speakAnswer(answer);
     return answer;
   };
 
@@ -264,24 +206,52 @@ export default function Assistant({ tone = 'deep' }) {
     try { rec.start(); } catch { resolve({ text: '', error: 'audio-capture' }); }
   });
 
+  // Speak with the natural voice when it is running, otherwise the browser's.
+  const speak = async (answer) => {
+    const text = speakable(answer, projects);
+    const engine = engineRef.current;
+    if (engine?.ready) {
+      setLevelSource(() => engine.getLevel());
+      await engine.speak(text);
+      if (engineRef.current) return; // finished (or slow check fell back: then read it with the browser voice)
+    }
+    setLevelSource(() => browserVoice.current.getLevel());
+    await browserVoice.current.speak(text);
+  };
+
   const startCall = async () => {
     if (callOn.current) return;
     callOn.current = true;
     setNotice('');
     stopSpeaking();
-    // These two must happen inside the click, or the browser keeps the audio muted.
+    // These have to start inside the click, or the browser keeps the audio muted.
     window.speechSynthesis?.speak(new SpeechSynthesisUtterance(''));
-    hqRef.current?.unlock?.();
+    let natural = null;
+    if (support.highQuality && !naturalFailed.current) {
+      const engine = getHighQualityVoice();
+      watchProgress(engine);
+      natural = engine.load(); // unlocks audio now, finishes (from the browser's cache) in a moment
+      natural.catch(() => {});
+    }
 
     setCall('connecting');
     setCallActive(true);
     setStageSlot(window.matchMedia('(min-width: 1024px)').matches ? document.getElementById('call-stage-slot') : null);
-    if (modeRef.current === 'off') setMode(support.builtin ? 'builtin' : 'off');
 
     const meter = await startMicMeter();
     if (meter.error) return endCall(MIC_ERRORS[meter.error]);
     meterRef.current = meter;
-    if (modeRef.current === 'hq' && !hqRef.current?.ready) await loadHq();
+
+    if (natural) {
+      try {
+        engineRef.current = await natural;
+      } catch (e) {
+        console.error('[voice]', e);
+        naturalFailed.current = true;
+        engineRef.current = null;
+        setNotice("The natural voice could not start, so I'm using your browser's voice.");
+      }
+    }
     if (!callOn.current) return undefined;
 
     let quiet = 0;
@@ -301,10 +271,10 @@ export default function Assistant({ tone = 'deep' }) {
       setLevelSource(null);
       const answer = await send(text, { call: true });
       if (!callOn.current) break;
-      if (document.querySelector('[data-call-limit]')) return undefined;
+      if (document.querySelector('[data-call-limit]')) return endCall('That is the limit for one visit. You can email me for more.');
       if (answer) {
         setCall('speaking');
-        await speakAnswer(answer, { call: true });
+        await speak(answer);
       } else {
         quiet += 1; // an error turn: give up after a few
         if (quiet >= 3) return endCall('The assistant is not answering right now. Please type your question or email me.');
@@ -326,13 +296,12 @@ export default function Assistant({ tone = 'deep' }) {
   /* -------------------------------- styling -------------------------------- */
 
   const c = dark
-    ? { muted: 'text-paper/65', body: 'text-paper', rule: 'border-paper/20', link: 'underline decoration-flag decoration-2 underline-offset-4 hover:text-flag', sug: 'text-paper/80 hover:text-flag', ctl: 'text-paper/80 hover:text-flag', accent: 'text-flag', line: 'border-paper/40', panel: 'border-paper/20 bg-deep-2', on: 'border-flag text-paper', off: 'border-paper/25 text-paper/80 hover:border-paper/60' }
-    : { muted: 'text-ink-3', body: 'text-ink', rule: 'border-rule', link: 'underline decoration-flag decoration-2 underline-offset-4 hover:text-flag-ink', sug: 'text-ink-2 hover:text-flag-ink', ctl: 'text-ink-2 hover:text-flag-ink', accent: 'text-flag-ink', line: 'border-ink-3', panel: 'border-rule bg-white/50', on: 'border-flag-ink text-ink', off: 'border-ink-3/40 text-ink-2 hover:border-ink' };
+    ? { muted: 'text-paper/65', body: 'text-paper', rule: 'border-paper/20', link: 'underline decoration-flag decoration-2 underline-offset-4 hover:text-flag', sug: 'text-paper/80 hover:text-flag', accent: 'text-flag', line: 'border-paper/40' }
+    : { muted: 'text-ink-3', body: 'text-ink', rule: 'border-rule', link: 'underline decoration-flag decoration-2 underline-offset-4 hover:text-flag-ink', sug: 'text-ink-2 hover:text-flag-ink', accent: 'text-flag-ink', line: 'border-ink-3' };
 
-  const modeLabel = { off: 'off', builtin: 'browser voice', hq: 'natural voice' }[mode];
-  const option = (active) => `block w-full text-left border px-4 py-3 transition-colors ${active ? c.on : c.off}`;
   const onCall = call !== 'idle';
-  const canCall = support.recognition && support.builtin;
+  const canCall = support.recognition && (support.builtin || support.highQuality);
+  const waitingForVoice = call === 'connecting' && download.total > 0 && download.loaded < download.total;
 
   const stage = onCall && (
     <Suspense fallback={null}>
@@ -356,10 +325,15 @@ export default function Assistant({ tone = 'deep' }) {
         </div>
       )}
 
+      {waitingForVoice && (
+        <VoiceLine loaded={download.loaded} total={download.total} tone={tone}
+          label={`Getting my voice ready: ${MB(download.loaded)} of ${MB(download.total)} MB`} />
+      )}
+
       {onCall && !stageSlot && <div className="mb-6 max-w-[360px]">{stage}</div>}
       {onCall && stageSlot && createPortal(stage, stageSlot)}
 
-      <form onSubmit={(e) => { e.preventDefault(); hqRef.current?.unlock?.(); send(value); }}>
+      <form onSubmit={(e) => { e.preventDefault(); send(value); }}>
         <label id={`${inputId}-label`} htmlFor={inputId} className={`block text-sm font-medium ${c.muted}`}>
           {canCall ? 'Or type a question' : "Ask about Arman's projects"}
         </label>
@@ -384,65 +358,12 @@ export default function Assistant({ tone = 'deep' }) {
         </div>
       </form>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
-        {(support.builtin || support.highQuality) && (
-          <button type="button" onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }} aria-expanded={menuOpen} className={c.ctl}>
-            Voice: {modeLabel} {menuOpen ? '▴' : '▾'}
-          </button>
-        )}
-        {speaking && !onCall && (
-          <button type="button" onClick={stopSpeaking} className={c.accent}>■ Stop speaking</button>
-        )}
-      </div>
-
-      {menuOpen && (
-        <div className={`mt-3 border p-4 space-y-2 ${c.panel}`} role="group" aria-label="Voice for spoken answers" onClick={(e) => e.stopPropagation()}>
-          <button type="button" className={option(mode === 'off')} onClick={() => chooseMode('off')}>
-            <span className="font-medium">Off</span>
-            <span className={`block text-sm ${c.muted}`}>Answers are text only.</span>
-          </button>
-          {support.builtin && (
-            <button type="button" className={option(mode === 'builtin')} onClick={() => chooseMode('builtin')}>
-              <span className="font-medium">Browser voice</span>
-              <span className={`block text-sm ${c.muted}`}>Instant. Uses the voice built into your device.</span>
-            </button>
-          )}
-          {support.highQuality && (
-            <button type="button" className={option(mode === 'hq')} onClick={() => chooseMode('hq')}>
-              <span className="font-medium">Natural voice (AI, runs on your device)</span>
-              <span className={`block text-sm ${c.muted}`}>
-                One-time download of about 125 MB, kept in your browser. Nothing is sent anywhere. Needs a reasonably fast computer.
-              </span>
-            </button>
-          )}
-          {support.highQuality && mode === 'hq' && (
-            <div className="flex items-center gap-4 pt-1 text-sm">
-              <span className={c.muted}>Pick a voice:</span>
-              {VOICES.map((v) => (
-                <button key={v.id} type="button" onClick={() => chooseVoice(v.id)} aria-pressed={voiceId === v.id}
-                  className={`underline-offset-4 ${voiceId === v.id ? `${c.accent} underline decoration-2` : `${c.ctl} hover:underline`}`}>
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          )}
-          <p className={`pt-1 text-xs ${c.muted}`}>
-            The natural voice is AI-generated speech (Pocket TTS by Kyutai), not a recording of a person.{' '}
-            <a className={c.link} href="/tts/NOTICE.txt" target="_blank" rel="noopener noreferrer">Credits</a>
-          </p>
-        </div>
-      )}
-
-      {hq.state === 'downloading' && (
-        <VoiceLine loaded={hq.loaded} total={hq.total} tone={tone}
-          label={hq.total ? `Downloading the voice: ${MB(hq.loaded)} of ${MB(hq.total)} MB` : 'Preparing the voice…'} />
-      )}
-
       {notice && <p role="status" className={`mt-3 text-sm ${c.muted}`}>{notice}</p>}
       {canCall && !onCall && turns.length === 0 && (
-        <p className={`mt-3 text-xs ${c.muted}`}>
-          The call uses your browser's speech recognition. In Chrome, the audio is sent to Google to be transcribed.
-          This is an AI assistant that speaks for me, using my project write-ups.
+        <p className={`mt-4 text-xs ${c.muted}`}>
+          This is an AI assistant that speaks for me, using my project write-ups. The call uses your browser's speech
+          recognition; in Chrome, the audio is sent to Google to be transcribed.{' '}
+          <a className={c.link} href="/tts/NOTICE.txt" target="_blank" rel="noopener noreferrer">Credits</a>
         </p>
       )}
 

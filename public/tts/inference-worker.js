@@ -41,7 +41,22 @@ async function sha256Hex(bytes) {
 }
 
 // Returns verified model bytes: from Cache Storage if present, otherwise downloaded once.
-async function fetchModel(stem) {
+// Concurrent callers (background prefetch + a call starting) share one download.
+const inflight = new Map();
+function fetchModel(stem) {
+    if (!inflight.has(stem)) inflight.set(stem, fetchModelOnce(stem).finally(() => inflight.delete(stem)));
+    return inflight.get(stem);
+}
+
+// Download + verify + store every model file, one at a time, WITHOUT starting the speech engine.
+// Keeps memory low (one file in memory at a time) so it is safe to run quietly in the background.
+async function prefetchModels() {
+    downloadedBytes = 0;
+    reportProgress();
+    for (const stem of Object.keys(MODEL_INFO)) await fetchModel(stem);
+}
+
+async function fetchModelOnce(stem) {
     const info = MODEL_INFO[stem];
     const url = MODEL_BASE + stem;
     const cache = await caches.open(MODEL_CACHE);
@@ -732,6 +747,12 @@ self.onmessage = async (e) => {
     try {
         if (type === "load") {
             await loadBundle(DEFAULT_LANGUAGE, { initialLoad: true });
+            return;
+        }
+
+        if (type === "prefetch") {
+            await prefetchModels();
+            postMessage({ type: "prefetched" });
             return;
         }
 

@@ -11,9 +11,9 @@ Model
   https://creativecommons.org/licenses/by/4.0/   (full text: LICENSE-model-CC-BY-4.0.txt)
 
 Voices
-  "Marius" and "Javert" are built-in voices from Kyutai's voice collection (voice-donations),
+  "Marius" is a built-in voice from Kyutai's voice collection (voice-donations),
   released under CC0 (public domain dedication). https://huggingface.co/kyutai/tts-voices
-  They are AI-generated speech, not recordings of the people who donated the originals.
+  It is AI-generated speech, not a recording of the person who donated the original.
 
 ONNX export of the model
   KevinAHM/pocket-tts-onnx, CC BY 4.0. https://huggingface.co/KevinAHM/pocket-tts-onnx
