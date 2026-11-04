@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import ProjectImage from '../components/ProjectImage';
-import { projects } from '../content';
+import { projects, projectLinks } from '../content';
 
 function Bullets({ items }) {
   return (
@@ -27,6 +27,7 @@ export default function ProjectDetail() {
   const p = projects[i];
   const prev = projects[i - 1];
   const next = projects[i + 1];
+  const links = projectLinks[p.slug];
   const credit = p.team ? { label: 'Team', value: p.team } : p.role ? { label: 'Role', value: p.role } : null;
 
   return (
@@ -55,6 +56,15 @@ export default function ProjectDetail() {
             <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Outcomes</h2>
             <div className="max-w-[68ch]"><Bullets items={p.outcomes} /></div>
           </section>
+          {links && (
+            <section>
+              <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Files and code</h2>
+              <ul className="space-y-2 text-lg">
+                {links.github && <li><a className="underline decoration-flag decoration-2 underline-offset-4 hover:text-flag-ink" href={links.github} target="_blank" rel="noopener noreferrer">View on GitHub ↗</a></li>}
+                {links.report && <li><a className="underline decoration-flag decoration-2 underline-offset-4 hover:text-flag-ink" href={links.report} target="_blank" rel="noopener noreferrer">Read the report ↗</a></li>}
+              </ul>
+            </section>
+          )}
           {p.related && (
             <section>
               <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Related co-op work</h2>

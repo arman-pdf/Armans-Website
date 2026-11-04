@@ -130,3 +130,8 @@ export const projectsIntro =
 
 // Imported from PORTFOLIO_PROJECTS.md by scripts/import-projects.mjs. Edit the markdown, then re-run the script.
 export const projects = projectData;
+
+// Where each project's files live. Fill in as repos are created, e.g.
+//   'ore-chimney-ni-43-101': { github: 'https://github.com/arman-pdf/ore-chimney', report: 'https://...' }
+// Keys are project slugs. Nothing renders for projects without an entry.
+export const projectLinks = {};

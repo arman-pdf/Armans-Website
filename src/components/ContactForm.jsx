@@ -4,9 +4,7 @@ import { contact } from '../content';
 const field =
   'mt-2 w-full bg-transparent border-0 border-b-2 border-ink-3 px-0 py-2 text-ink placeholder:text-ink-3 focus:border-flag-ink focus:outline-none focus:ring-0';
 
-const encode = (data) => new URLSearchParams(data).toString();
-
-// Netlify Forms: posts to the hidden form declared in index.html.
+// Posts to /api/contact (a Cloudflare Pages Function that forwards the message).
 export default function ContactForm() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
 
@@ -15,10 +13,10 @@ export default function ContactForm() {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     setStatus('sending');
     try {
-      const res = await fetch('/', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({ 'form-name': 'contact', ...data }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error(String(res.status));
       e.currentTarget.reset();
