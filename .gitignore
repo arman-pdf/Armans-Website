@@ -41,3 +41,18 @@ projects/
 .env*
 .wrangler/
 functions/_knowledge.js
+
+# Documents (reports, posters, notebooks) can contain student ID numbers: never commit by accident.
+# To publish ONE cleaned file, add an exception line, e.g.  !public/projects/ore-chimney-ni-43-101/report.pdf
+*.pdf
+*.doc
+*.docx
+*.pptx
+*.xlsx
+*.heic
+*.mp4
+
+# Local working folders that held raw coursework
+website folder
+website folder ak/
+.playwright-mcp/

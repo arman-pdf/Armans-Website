@@ -1,5 +1,8 @@
 // Cloudflare Pages Function: POST /api/chat
-// Streams a short answer about Arman's projects from an Ollama Cloud model.
+// Streams a short answer about Arman's projects. Provider order:
+//   1. Workers AI binding (env.AI)       production: no API key exists anywhere
+//   2. Workers AI over REST              local dev: CF_ACCOUNT_ID + CF_API_TOKEN in .dev.vars
+//   3. Ollama Cloud (OLLAMA_API_KEY)     optional; needs paid credits on Ollama's side
 import { buildSystemPrompt } from '../_prompt.js';
 
 const EMAIL = 'azkanorw@uwaterloo.ca';
@@ -8,6 +11,8 @@ const MAX_TURNS = 10; // messages kept from history
 const MAX_USER_CHARS = 500;
 const MAX_ASSISTANT_CHARS = 2_000;
 const OLLAMA_URL = 'https://ollama.com/api/chat';
+const WORKERS_MODEL = '@cf/qwen/qwen3-30b-a3b-fp8'; // ~30 neurons per question: ~300 questions/day free
+const GEN = { temperature: 0.3, max_tokens: 400 };
 
 const json = (status, body, extra = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extra } });
@@ -76,6 +81,46 @@ function ndjsonToText(upstream) {
   });
 }
 
+// Workers AI streams server-sent events: `data: {"response":"..."}` (or OpenAI-style deltas).
+// Forward only the visible text; ignore reasoning fields and the [DONE] marker.
+function sseToText(upstream) {
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let buffer = '';
+  const pull = (line, controller) => {
+    if (!line.startsWith('data:')) return;
+    const data = line.slice(5).trim();
+    if (!data || data === '[DONE]') return;
+    try {
+      const o = JSON.parse(data);
+      const piece = o.response ?? o.choices?.[0]?.delta?.content ?? o.choices?.[0]?.text;
+      if (typeof piece === 'string' && piece) controller.enqueue(encoder.encode(piece));
+    } catch { /* skip a malformed line */ }
+  };
+  return new ReadableStream({
+    async start(controller) {
+      const reader = upstream.getReader();
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let nl;
+          while ((nl = buffer.indexOf('\n')) >= 0) {
+            pull(buffer.slice(0, nl).trim(), controller);
+            buffer = buffer.slice(nl + 1);
+          }
+        }
+        pull(buffer.trim(), controller);
+      } finally {
+        controller.close();
+      }
+    },
+  });
+}
+
+const quotaHit = (e) => /4006|429|neurons|rate.?limit|quota/i.test(String(e?.message ?? e));
+
 const MOCK = "This is a local test answer. Arman's Ore Chimney report (see /projects/ore-chimney-ni-43-101) was a group project with Celina Cayabyab, Michael Forte and Kiara Harmon. It validated 164 core assays and estimated an indicated resource of about 646 oz of gold.";
 
 export async function onRequestPost({ request, env }) {
@@ -99,8 +144,33 @@ export async function onRequestPost({ request, env }) {
   const stream = { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } };
 
   if (env.ASSISTANT_MOCK) return new Response(MOCK, stream);
-  if (!env.OLLAMA_API_KEY) return json(503, { error: 'not_configured' });
+  const system = { role: 'system', content: buildSystemPrompt(EMAIL) };
+  const model = env.WORKERS_MODEL || WORKERS_MODEL;
 
+  // 1 + 2: Workers AI (binding in production, REST for local testing)
+  if (env.AI || (env.CF_ACCOUNT_ID && env.CF_API_TOKEN)) {
+    try {
+      let body;
+      if (env.AI) {
+        body = await env.AI.run(model, { messages: [system, ...messages], stream: true, ...GEN });
+      } else {
+        const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/ai/run/${model}`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${env.CF_API_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: [system, ...messages], stream: true, ...GEN }),
+        });
+        if (res.status === 429) return json(503, { error: 'quota' });
+        if (!res.ok || !res.body) return json(503, { error: 'unavailable' });
+        body = res.body;
+      }
+      return new Response(sseToText(body), stream);
+    } catch (e) {
+      return json(503, { error: quotaHit(e) ? 'quota' : 'unavailable' });
+    }
+  }
+
+  // 3: Ollama Cloud
+  if (!env.OLLAMA_API_KEY) return json(503, { error: 'not_configured' });
   let upstream;
   try {
     upstream = await fetch(OLLAMA_URL, {
@@ -109,14 +179,14 @@ export async function onRequestPost({ request, env }) {
       body: JSON.stringify({
         model: env.OLLAMA_MODEL || 'gpt-oss:120b',
         stream: true,
-        messages: [{ role: 'system', content: buildSystemPrompt(EMAIL) }, ...messages],
-        options: { temperature: 0.3, num_predict: 400 },
+        messages: [system, ...messages],
+        options: { temperature: GEN.temperature, num_predict: GEN.max_tokens },
       }),
     });
   } catch {
     return json(503, { error: 'unavailable' });
   }
-  if (upstream.status === 429) return json(503, { error: 'quota' });
+  if (upstream.status === 429 || upstream.status === 402) return json(503, { error: 'quota' });
   if (!upstream.ok || !upstream.body) return json(503, { error: 'unavailable' });
 
   return new Response(ndjsonToText(upstream.body), stream);
