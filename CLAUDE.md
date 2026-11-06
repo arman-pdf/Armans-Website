@@ -56,7 +56,7 @@ public/projects/<slug>/ hero.jpg, thumb.jpg, gallery-N.jpg (ID-free crops)
 - A circle button opens the chat panel in the hero. `Assistant.jsx` streams answers from `/api/chat`. The ring breathes while an answer is being written.
 - Persona is Arman in the FIRST person, honest that it is an AI if asked, answering only from the project write-ups (`functions/_knowledge.js`, generated). Prompt lives in `functions/_prompt.js`; replies keep `/projects/slug` links.
 - Voice was built and then removed on purpose (in-browser TTS was unreliable). Do not re-add microphone or speech code without being asked; the security header blocks the microphone.
-- The depth gauge (right edge, wide screens) runs from 0 m (sea level) at the top of every page to -500 m at the bottom.
+- The depth gauge (right edge, wide screens) runs from 425 m (top of the Waterloo Moraine) at the top of every page, through 0 m (sea level) at the midpoint, to -425 m at the bottom.
 
 ## Safety rules (do not regress)
 
