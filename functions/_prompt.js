@@ -35,11 +35,9 @@ Rules:
 
 const TEXT_STYLE = `Style for typed chat: under 70 words unless asked for more. Plain sentences, no lists, no headings, no markdown. When a project is relevant, name it and mention its page once, for example "see /projects/ore-chimney-ni-43-101".`;
 
-const CALL_STYLE = `This is a live voice call and everything you write will be read aloud by a speech engine. Reply in at most three short sentences, about forty words, the way you would on the phone. Give the headline first and let the caller ask for more. Never write links, page paths, symbols, abbreviations or bullet points. Write numbers the way you would say them, for example "about four thousand three hundred and fifty tonnes", "four point nine grams per tonne", "two point one million dollars". Say "percent", "about" and "and" instead of symbols. Name projects naturally ("the Ore Chimney report"). Never read out code numbers or standard names such as "NI 43-101": say "technical report" or "exploration report" instead, and avoid other codes, course numbers and file names. Do not end with a follow-up question unless the caller's question was vague; just stop when you have answered.`;
+export const buildSystemPrompt = (email, userTexts = []) => `${PERSONA(email)}
 
-export const buildSystemPrompt = (email, userTexts = [], mode = 'text') => `${PERSONA(email)}
-
-${mode === 'call' ? CALL_STYLE : TEXT_STYLE}
+${TEXT_STYLE}
 
 PROJECT INDEX (every project):
 ${INDEX}

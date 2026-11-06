@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import TerrainFigure from '../components/TerrainFigure';
 import Assistant from '../components/Assistant';
-import { useCallActive } from '../lib/callStore';
 import { profile, experiences, projects } from '../content';
 
 const [first, ...rest] = profile.name.split(' ');
@@ -12,7 +11,6 @@ function Arrow() {
 }
 
 export default function Home() {
-  const calling = useCallActive();
   const featured = projects.filter((p) => p.featured).slice(0, 5);
 
   return (
@@ -40,8 +38,7 @@ export default function Home() {
             <Assistant tone="deep" />
           </div>
           <div className="lg:col-span-5 lg:sticky lg:top-24">
-            <div className={calling ? 'hidden' : ''}><TerrainFigure /></div>
-            <div id="call-stage-slot" className={calling ? 'hidden lg:block' : 'hidden'} />
+            <TerrainFigure />
           </div>
         </div>
       </section>

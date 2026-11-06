@@ -122,7 +122,7 @@ export default function TerrainCanvas({ onReady, onFail }) {
       start: 'top top', end: 'bottom top', scrub: 0.6,
     };
     const tl = gsap.timeline({ scrollTrigger: heroTrigger });
-    tl.to(state, { phi: 78, ease: 'none' }, 0).to(el, { opacity: 0.15, ease: 'none' }, 0);
+    tl.to(state, { phi: 58, ease: 'none' }, 0).to(el, { opacity: 0.1, ease: 'none' }, 0); // gentle tilt: near top-down stretched the picture
     cleanups.push(() => { tl.scrollTrigger?.kill(); tl.kill(); });
 
     const target = new THREE.Vector3(0, 0.1, 0);

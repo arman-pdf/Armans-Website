@@ -6,13 +6,13 @@ export class AskError extends Error {
   }
 }
 
-export async function ask(messages, { signal, onText, mode = 'text' }) {
+export async function ask(messages, { signal, onText }) {
   let res;
   try {
     res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, mode }),
+      body: JSON.stringify({ messages }),
       signal,
     });
   } catch (e) {

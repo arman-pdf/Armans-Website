@@ -148,8 +148,7 @@ export async function onRequestPost({ request, env }) {
 
   const hasProvider = env.GROQ_API_KEY || env.AI || (env.CF_ACCOUNT_ID && env.CF_API_TOKEN) || env.OLLAMA_API_KEY;
   if (env.ASSISTANT_MOCK && !hasProvider) return new Response(MOCK, stream);
-  const mode = body?.mode === 'call' ? 'call' : 'text';
-  const system = { role: 'system', content: buildSystemPrompt(EMAIL, messages.filter((m) => m.role === 'user').map((m) => m.content), mode) };
+  const system = { role: 'system', content: buildSystemPrompt(EMAIL, messages.filter((m) => m.role === 'user').map((m) => m.content)) };
   const model = env.WORKERS_MODEL || WORKERS_MODEL;
 
   // 1: Groq (OpenAI-compatible streaming)

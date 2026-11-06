@@ -36,7 +36,10 @@ export default function TerrainFigure() {
           alt="Line drawing of terrain relief across the Waterloo Moraine"
           width="500"
           height="400"
-          className="absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full transition-opacity duration-700"
+          // Once the live 3D drawing is up, the still one must go: otherwise it shows through the
+          // 3D while that fades and tilts on scroll, and the two drawings overlap into a smear.
+          style={{ opacity: live && ready && !failed ? 0 : 1 }}
         />
         {live && !failed && (
           <Suspense fallback={null}>

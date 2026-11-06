@@ -90,11 +90,7 @@ summary::-webkit-details-marker {
   animation: loader-out 0.65s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
-/* The call circle: rings ripple while connecting, swell with loudness during the call */
-@keyframes ring-out {
-  from { transform: scale(1); opacity: 0.6; }
-  to { transform: scale(2.6); opacity: 0; }
-}
+/* The chat circle: a soft ring breathes while an answer is being written */
 @keyframes ring-think {
   0%, 100% { transform: scale(1.18); opacity: 0.25; }
   50% { transform: scale(1.4); opacity: 0.55; }
@@ -106,18 +102,8 @@ summary::-webkit-details-marker {
   border: 1px solid rgb(var(--flag-rgb));
   pointer-events: none;
 }
-.call-ring.ripple { animation: ring-out 2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
-.call-ring.ripple:nth-child(2) { animation-delay: 0.65s; }
-.call-ring.ripple:nth-child(3) { animation-delay: 1.3s; }
 .call-ring.think { animation: ring-think 1.8s ease-in-out infinite; }
-.call-ring.live {
-  transform: scale(calc(1.15 + var(--lvl, 0) * 0.9));
-  opacity: calc(0.25 + var(--lvl, 0) * 0.65);
-  transition: transform 0.08s linear, opacity 0.08s linear;
-}
-.call-glow {
-  box-shadow: 0 0 calc(8px + var(--lvl, 0) * 34px) rgb(var(--flag-rgb) / calc(0.12 + var(--lvl, 0) * 0.5));
-}
+.call-glow { box-shadow: 0 0 22px rgb(var(--flag-rgb) / 0.3); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -127,5 +113,5 @@ summary::-webkit-details-marker {
     animation-iteration-count: 1 !important;
     transition: none !important;
   }
-  .call-ring.ripple, .call-ring.think { display: none; }
+  .call-ring.think { display: none; }
 }
