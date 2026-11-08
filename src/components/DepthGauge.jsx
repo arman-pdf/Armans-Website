@@ -37,7 +37,7 @@ export default function DepthGauge() {
   return (
     <div
       aria-hidden="true"
-      className="hidden min-[1400px]:flex fixed right-16 top-1/2 -translate-y-1/2 z-30 h-56 items-stretch gap-3 font-mono text-[11px] tnum text-paper mix-blend-difference pointer-events-none"
+      className="hidden min-[1400px]:flex fixed right-16 top-1/2 -translate-y-1/2 z-30 h-56 items-stretch gap-3 font-mono text-[0.6875rem] tnum text-paper mix-blend-difference pointer-events-none"
     >
       <div className="flex flex-col justify-between text-right">
         <span>{TOP}</span>

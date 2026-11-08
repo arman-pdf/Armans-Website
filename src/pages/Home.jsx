@@ -15,9 +15,9 @@ export default function Home() {
 
   return (
     <>
-      <section className="on-deep bg-deep text-paper">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-8 py-14 md:py-24 grid lg:grid-cols-12 gap-12 items-start">
-          <div className="lg:col-span-7">
+      <section className="on-deep bg-deep text-paper hero-fill">
+        <div className="mx-auto w-full max-w-[73.75rem] px-5 md:px-8 py-14 md:py-20 grid min-[900px]:grid-cols-12 gap-12 items-start">
+          <div className="min-[900px]:col-span-7">
             <h1 className="font-display font-extrabold text-[clamp(3.25rem,10vw,6rem)] leading-[0.92] tracking-[-0.04em]">
               {first}<br />{rest.join(' ')}
             </h1>
@@ -37,13 +37,13 @@ export default function Home() {
             </div>
             <Assistant tone="deep" />
           </div>
-          <div className="lg:col-span-5 lg:sticky lg:top-24">
+          <div className="min-[900px]:col-span-5 min-[900px]:sticky min-[900px]:top-24">
             <TerrainFigure />
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1180px] px-5 md:px-8 py-20 md:py-28">
+      <section className="mx-auto max-w-[73.75rem] px-5 md:px-8 py-20 md:py-28">
         <div className="flex items-end justify-between gap-6 mb-10">
           <h2 className="font-display font-extrabold text-4xl md:text-5xl tracking-[-0.03em] leading-none">Experience</h2>
           <Link to="/work" className="group text-sm font-medium text-flag-ink">All experience <Arrow /></Link>
@@ -62,7 +62,7 @@ export default function Home() {
       </section>
 
       <section className="border-t border-rule">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-8 py-20 md:py-28">
+        <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 py-20 md:py-28">
           <div className="flex items-end justify-between gap-6 mb-10">
             <h2 className="font-display font-extrabold text-4xl md:text-5xl tracking-[-0.03em] leading-none">Projects</h2>
             <Link to="/projects" className="group text-sm font-medium text-flag-ink">All projects <Arrow /></Link>

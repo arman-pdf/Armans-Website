@@ -28,7 +28,7 @@ export default function Projects() {
     <>
       <PageHeader title="Projects">{projectsIntro}</PageHeader>
 
-      <div className="mx-auto max-w-[1180px] px-5 md:px-8 pb-10">
+      <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 pb-10">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter projects by topic">
           <button type="button" className={chip(!active)} aria-pressed={!active} onClick={() => setParams({})}>All</button>
           {tags.map((t) => (
@@ -43,7 +43,7 @@ export default function Projects() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-[1180px] px-5 md:px-8 pb-24">
+      <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 pb-24">
         {years.map((y) => (
           <section key={y} className="grid md:grid-cols-12 gap-x-8 border-t border-rule pt-8 pb-6" aria-label={`Projects from ${y}`}>
             <h2 className="md:col-span-2 font-display font-extrabold text-3xl tracking-[-0.03em] mb-4 md:mb-0 tnum">{y}</h2>

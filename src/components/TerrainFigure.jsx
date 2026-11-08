@@ -55,7 +55,7 @@ export default function TerrainFigure() {
           </Suspense>
         )}
       </div>
-      <figcaption className="mt-4 flex items-center gap-2 font-mono text-[11px] tnum tracking-[0.04em] text-paper/70">
+      <figcaption className="mt-4 flex items-center gap-2 font-mono text-[0.6875rem] tnum tracking-[0.04em] text-paper/70">
         <span aria-hidden className="inline-block h-2.5 w-2.5 bg-flag [clip-path:polygon(0_0,100%_50%,0_100%)]" />
         {caption}
       </figcaption>

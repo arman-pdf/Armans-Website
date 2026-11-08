@@ -7,7 +7,7 @@ export default function Contact() {
   return (
     <>
       <PageHeader title="Contact">{contact.intro}</PageHeader>
-      <div className="mx-auto max-w-[1180px] px-5 md:px-8 pb-24 grid md:grid-cols-12 gap-x-12 gap-y-16">
+      <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 pb-24 grid md:grid-cols-12 gap-x-12 gap-y-16">
         <div className="md:col-span-7">
           <ContactForm />
         </div>

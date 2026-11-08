@@ -31,7 +31,7 @@ export default function ProjectDetail() {
   const credit = p.team ? { label: 'Team', value: p.team } : p.role ? { label: 'Role', value: p.role } : null;
 
   return (
-    <article className="mx-auto max-w-[1180px] px-5 md:px-8 pt-10 md:pt-16 pb-24">
+    <article className="mx-auto max-w-[73.75rem] px-5 md:px-8 pt-10 md:pt-16 pb-24">
       <Link to="/projects" className="text-sm font-medium text-flag-ink hover:underline underline-offset-4">← All projects</Link>
       <h1 className="mt-8 font-display font-extrabold text-[clamp(2.25rem,6vw,4.75rem)] leading-[0.98] tracking-[-0.035em] max-w-[20ch] text-balance">
         {p.title}

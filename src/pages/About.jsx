@@ -7,7 +7,7 @@ export default function About() {
   return (
     <>
       <PageHeader title="About" />
-      <div className="mx-auto max-w-[1180px] px-5 md:px-8 pb-24">
+      <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 pb-24">
         <div className="grid lg:grid-cols-12 gap-x-12 gap-y-12 items-start">
           <div className="lg:col-span-7 lg:order-1 order-2">
             <p className="font-display text-2xl md:text-3xl tracking-[-0.015em] leading-snug max-w-[30ch] text-balance">{lead}</p>
@@ -28,7 +28,7 @@ export default function About() {
                 className="block h-auto w-full"
               />
             </div>
-            <figcaption className="mt-3 flex items-center gap-2 font-mono text-[11px] tracking-[0.04em] text-ink-3">
+            <figcaption className="mt-3 flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.04em] text-ink-3">
               <span aria-hidden className="inline-block h-2.5 w-2.5 bg-flag [clip-path:polygon(0_0,100%_50%,0_100%)]" />
               UNIVERSITY OF WATERLOO · CONVOCATION
             </figcaption>

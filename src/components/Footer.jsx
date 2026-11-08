@@ -6,7 +6,7 @@ import meta from '../assets/terrain.json';
 export default function Footer() {
   return (
     <footer className="on-deep bg-deep text-paper">
-      <div className="mx-auto max-w-[1180px] px-5 md:px-8 py-14 grid md:grid-cols-12 gap-10">
+      <div className="mx-auto max-w-[73.75rem] px-5 md:px-8 py-14 grid md:grid-cols-12 gap-10">
         <div className="md:col-span-6">
           <p className="font-display font-bold text-3xl md:text-4xl tracking-[-0.02em] leading-tight">
             Open to opportunities in groundwater, GIS, compliance and ESG.
@@ -22,7 +22,7 @@ export default function Footer() {
           <Link className="hover:text-flag" to="/contact">Contact</Link>
           <a className="hover:text-flag" href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
         </nav>
-        <p className="md:col-span-3 font-mono text-[11px] leading-relaxed text-paper/60">
+        <p className="md:col-span-3 font-mono text-[0.6875rem] leading-relaxed text-paper/60">
           &copy; {new Date().getFullYear()} {profile.name}
           <br />
           Terrain: {meta.name}, {meta.minElevation}–{meta.maxElevation} m. Elevation data from {meta.source}.
