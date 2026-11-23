@@ -10,7 +10,9 @@ export default function ContactForm() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    // Keep the form element now: React clears e.currentTarget once the handler awaits.
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
     setStatus('sending');
     try {
       const res = await fetch('/api/contact', {
@@ -19,7 +21,7 @@ export default function ContactForm() {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error(String(res.status));
-      e.currentTarget.reset();
+      form.reset();
       setStatus('sent');
     } catch {
       setStatus('error');
