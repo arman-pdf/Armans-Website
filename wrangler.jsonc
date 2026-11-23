@@ -1,0 +1,16 @@
+// Cloudflare Workers config. Deploy runs `npm run build`, then `npx wrangler deploy`.
+// Secrets (GROQ_API_KEY, RESEND_API_KEY) and CONTACT_TO are set in the dashboard:
+// Worker > Settings > Variables and Secrets. Never put them in this file.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "armans-website",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}

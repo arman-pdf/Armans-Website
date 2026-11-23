@@ -10,7 +10,7 @@ Arman Kanorwalla's portfolio (environmental scientist / geoscience specialist). 
 
 - React 18 + react-router-dom 7, Vite 8, Tailwind CSS 3
 - Three.js + GSAP (lazy-loaded 3D terrain, desktop only)
-- Cloudflare Pages + Pages Functions (`/functions`) for hosting and the server side
+- Cloudflare Workers with static assets (`wrangler.jsonc`): `/dist` is served as-is and `worker/index.js` routes `/api/chat` and `/api/contact` to the handlers in `/functions` (kept in Pages Functions shape so `npm run dev` runs the same code). Deploy = `npm run build` then `npx wrangler deploy`. Runtime secrets go in the Worker's Settings > Variables and Secrets, not Build variables
 - Assistant model: Groq (`openai/gpt-oss-120b`, free tier: 8,000 tokens/min, 1,000 requests/day). Key `GROQ_API_KEY` is an environment variable, never in code. Ollama and Workers AI are optional fallbacks in `functions/api/chat.js`
 - Fonts self-hosted via `@fontsource` (Bricolage Grotesque, IBM Plex Sans/Mono)
 
