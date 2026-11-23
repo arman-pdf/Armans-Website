@@ -1,6 +1,7 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import ContactForm from '../components/ContactForm';
+import ResumeLink from '../components/ResumeLink';
 import { contact, profile } from '../content';
 
 export default function Contact() {
@@ -23,6 +24,10 @@ export default function Contact() {
             <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-lg underline decoration-rule underline-offset-4 hover:decoration-flag">
               linkedin.com/in/armankanorwalla ↗
             </a>
+          </div>
+          <div>
+            <p className="text-sm text-ink-3">Resume</p>
+            <p className="mt-1 text-lg"><ResumeLink>One page, PDF</ResumeLink></p>
           </div>
           <div>
             <p className="text-sm text-ink-3">Based in</p>

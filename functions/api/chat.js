@@ -7,7 +7,7 @@
 // ASSISTANT_MOCK only answers with sample text when NO real provider is configured.
 import { buildSystemPrompt } from '../_prompt.js';
 
-const EMAIL = 'azkanorw@uwaterloo.ca';
+const EMAIL = 'armankanor3@gmail.com';
 const MAX_BODY = 24_000; // bytes
 const MAX_TURNS = 10; // messages kept from history
 const MAX_USER_CHARS = 500;

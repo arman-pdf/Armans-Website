@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Otter Island · Arman Kanorwalla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Figtree:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: one full-bleed 3D scene at golden hour, with a single glass card pinned
+     bottom-left (it becomes a full-width strip on phones). Single theme by choice. */
+  --sky-top:#1b3a5e;
+  --sky-mid:#3b7f8e;
+  --sky-rose:#d8957c;
+  --sky-low:#f6ab6c;
+  --sky-glow:#ffdfae;
+  --ink:#fff6e8;
+  --ink-soft:rgba(255,246,232,.76);
+  --panel:rgba(16,36,54,.64);
+  --line:rgba(255,246,232,.17);
+  --mango:#ffa23f;
+  --teal:#49d1c4;
+  --display:"Dela Gothic One","Arial Black",Impact,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  overflow:hidden;
+  font-family:var(--body);
+  color:var(--ink);
+  background:
+    radial-gradient(75% 46% at 28% 92%, rgba(255,223,174,.9), rgba(255,223,174,0) 70%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-rose) 66%, var(--sky-low) 84%, var(--sky-glow) 100%);
+  background-color:var(--sky-mid);
+  -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#stage{position:absolute;inset:0}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
+#stage canvas:active{cursor:grabbing}
+#stage canvas.over{cursor:pointer}
+body.kbd #stage canvas:focus{outline:3px solid var(--teal);outline-offset:-3px}
+
+.hint{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  margin:0;max-width:calc(100% - 32px);
+  padding:6px 13px;border-radius:999px;
+  background:rgba(16,36,54,.42);
+  font-size:12px;font-weight:500;line-height:1.35;text-align:center;
+  color:var(--ink-soft);
+  pointer-events:none;transition:opacity .8s ease;
+}
+.hint.used{opacity:.0}
+
+.card{
+  position:absolute;left:20px;bottom:20px;
+  width:min(318px, calc(100% - 32px));
+  display:grid;gap:11px;
+  padding:16px 18px 17px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:20px;
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  backdrop-filter:blur(14px) saturate(1.2);
+  box-shadow:0 14px 40px rgba(10,24,38,.28);
+}
+.card p,.card h1,.card ul{margin:0;padding:0}
+.eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--mango);
+}
+.card h1{
+  font-family:var(--display);font-weight:400;
+  font-size:34px;line-height:1;letter-spacing:.01em;
+  text-wrap:balance;
+}
+.traits{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.traits li{
+  padding:5px 10px;border-radius:999px;
+  font-size:12.5px;font-weight:600;line-height:1.2;
+  color:#d2f7f2;
+  background:rgba(73,209,196,.15);
+  border:1px solid rgba(73,209,196,.42);
+}
+.motto{
+  padding-top:11px;border-top:1px solid var(--line);
+  font-size:14px;font-style:italic;font-weight:500;line-height:1.4;
+  color:var(--ink-soft);
+}
+.back{
+  justify-self:start;
+  font-size:12.5px;font-weight:700;line-height:1.2;
+  color:var(--mango);text-decoration:none;
+}
+.back:hover{text-decoration:underline;text-underline-offset:3px}
+.back:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+.fallback{
+  position:absolute;inset:0;display:none;place-items:center;
+  padding:24px;text-align:center;font-size:15px;line-height:1.5;color:var(--ink);
+}
+.fallback.show{display:grid}
+
+@media (max-width:600px){
+  .card{left:12px;right:12px;bottom:12px;width:auto;gap:9px;padding:13px 15px 14px;border-radius:18px}
+  .card h1{font-size:28px}
+  .motto{padding-top:9px;font-size:13.5px}
+  .hint{top:10px;font-size:11.5px}
+}
+@media (prefers-reduced-motion:reduce){ .hint{transition:none} }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<p class="fallback" id="fallback">This device could not start 3D graphics, so the otter can't be drawn here. Try another browser or device.</p>
+<p class="hint" id="hint">Drag to look around · Scroll or pinch to zoom · Tap the otter</p>
+
+<aside class="card" id="card" aria-label="Arman as an animal">
+  <p class="eyebrow">Arman as an animal</p>
+  <h1>The Otter</h1>
+  <ul class="traits" aria-label="Top three traits">
+    <li>Always in motion</li>
+    <li>Reroutes fast</li>
+    <li>Everyone's go-to</li>
+  </ul>
+  <p class="motto">"Eat well, move daily, leave when the scene is dead."</p>
+  <a class="back" href="/about" id="back">← Back to Arman's site</a>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  document.getElementById('back').addEventListener('click', function (ev) {
+    if (document.referrer.indexOf(location.origin) === 0 && history.length > 1) { ev.preventDefault(); history.back(); }
+  });
+
+  var stage = document.getElementById('stage');
+  var card = document.getElementById('card');
+  var hint = document.getElementById('hint');
+  function fail() { document.getElementById('fallback').classList.add('show'); hint.style.display = 'none'; }
+
+  if (!window.THREE || !THREE.OrbitControls) { fail(); return; }
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) { fail(); return; }
+
+  var smallScreen = Math.min(window.innerWidth, window.innerHeight) < 600;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  var canvas = renderer.domElement;
+  canvas.tabIndex = 0;
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', 'A low-poly otter on a floating island. Press Enter to make it celebrate.');
+  stage.appendChild(canvas);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 120);
+  camera.position.set(6.2, 4.6, 9.4);
+
+  /* ---------- helpers ---------- */
+  var PI = Math.PI;
+  var seed = 20261117;
+  function rnd() { // mulberry32
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+  function range(a, b) { return a + (b - a) * rnd(); }
+
+  var matCache = {};
+  function mat(hex, opts) {
+    var key = hex + (opts ? JSON.stringify(opts) : '');
+    if (!matCache[key]) {
+      var o = { color: hex, flatShading: true, roughness: 0.86, metalness: 0 };
+      if (opts) for (var k in opts) o[k] = opts[k];
+      matCache[key] = new THREE.MeshStandardMaterial(o);
+    }
+    return matCache[key];
+  }
+  function add(geo, material, parent, x, y, z) {
+    var m = new THREE.Mesh(geo, material);
+    m.position.set(x || 0, y || 0, z || 0);
+    m.castShadow = true; m.receiveShadow = true;
+    parent.add(m);
+    return m;
+  }
+  function blob(detail, sx, sy, sz) {
+    var g = new THREE.IcosahedronGeometry(1, detail);
+    g.scale(sx, sy, sz);
+    return g;
+  }
+  // Nudge vertices by a hash of their position, so shared corners stay welded.
+  function jitter(geo, amt, salt, keepY) {
+    var p = geo.attributes.position;
+    for (var i = 0; i < p.count; i++) {
+      var x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+      var q = Math.round(x * 100) * 12.9898 + Math.round(y * 100) * 78.233 + Math.round(z * 100) * 37.719;
+      var h = function (n) { var s = Math.sin(q + salt * n) * 43758.5453; return (s - Math.floor(s)) - 0.5; };
+      p.setXYZ(i, x + h(1.3) * amt, y + (keepY ? 0 : h(2.1) * amt), z + h(3.7) * amt);
+    }
+    p.needsUpdate = true;
+    return geo;
+  }
+  function group(parent, x, y, z) {
+    var g = new THREE.Group();
+    g.position.set(x || 0, y || 0, z || 0);
+    parent.add(g);
+    return g;
+  }
+
+  /* ---------- palette ---------- */
+  var C = {
+    grass: 0x86c06a, grassDark: 0x5fa25c, dirt: 0xa0714e, rock: 0x80695b, rockDark: 0x62504a,
+    sand: 0xe6cb93, water: 0x58c9d0,
+    fur: 0x9c6339, furDark: 0x6e4226, cream: 0xf4dfb8, ink: 0x2a1b15,
+    mango: 0xffa23f, teal: 0x49d1c4, coral: 0xff7b6b, sun: 0xffd166,
+    wood: 0xb47c4c, woodDark: 0x7c5233, iron: 0x33404c, bone: 0xf1ede2, indigo: 0x24476a
+  };
+
+  /* ---------- lights: soft key, sky fill, cool rim ---------- */
+  scene.add(new THREE.HemisphereLight(0xffe6c9, 0x3d6f80, 0.58));
+  var sun = new THREE.DirectionalLight(0xffd6a6, 0.72);
+  sun.position.set(7, 10, 5.5);
+  sun.castShadow = true;
+  var sm = smallScreen ? 1024 : 2048;
+  sun.shadow.mapSize.set(sm, sm);
+  sun.shadow.camera.left = -5.5; sun.shadow.camera.right = 5.5;
+  sun.shadow.camera.top = 5.5; sun.shadow.camera.bottom = -5.5;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 32;
+  sun.shadow.bias = -0.0005;
+  sun.shadow.normalBias = 0.03;
+  scene.add(sun);
+  var rim = new THREE.DirectionalLight(0x9fdcf0, 0.24);
+  rim.position.set(-6, 3, -6);
+  scene.add(rim);
+
+  /* ---------- floating island ---------- */
+  var world = group(scene); // everything on the island bobs together
+
+  add(new THREE.CylinderGeometry(3.6, 3.46, 0.28, 11), mat(C.grass), world, 0, -0.14, 0);
+  add(jitter(new THREE.CylinderGeometry(3.36, 2.7, 0.92, 11), 0.12, 3, true), mat(C.dirt), world, 0, -0.7, 0);
+  var coneGeo = new THREE.ConeGeometry(2.75, 2.5, 10, 3);
+  coneGeo.rotateX(PI);
+  add(jitter(coneGeo, 0.3, 7), mat(C.rock), world, 0, -2.36, 0);
+  add(jitter(blob(1, 0.75, 0.9, 0.7), 0.1, 11), mat(C.rockDark), world, 1.5, -1.75, 0.9);
+  add(jitter(blob(1, 0.6, 0.8, 0.6), 0.1, 13), mat(C.rockDark), world, -1.4, -1.9, -0.8);
+  add(jitter(blob(1, 0.5, 0.6, 0.5), 0.1, 17), mat(C.rock), world, -0.6, -1.7, 1.6);
+
+  // loose shards drifting under the island
+  var shards = [];
+  for (var s = 0; s < 6; s++) {
+    var sh = add(jitter(blob(0, range(0.14, 0.3), range(0.18, 0.36), range(0.14, 0.3)), 0.05, 20 + s),
+      mat(s % 2 ? C.rock : C.rockDark), scene);
+    sh.userData = { a: s / 6 * PI * 2 + range(-0.3, 0.3), r: range(3.5, 4.5), y: range(-3.1, -1.5), sp: range(0.5, 1.1), ph: range(0, 6) };
+    sh.castShadow = false;
+    shards.push(sh);
+  }
+
+  /* ---------- pond ---------- */
+  var pond = group(world, -1.6, 0, -1.6);
+  add(jitter(new THREE.CylinderGeometry(1.14, 1.14, 0.06, 9), 0.07, 5, true), mat(C.sand), pond, 0, 0.03, 0);
+  var water = add(new THREE.CylinderGeometry(0.94, 0.94, 0.05, 9), mat(C.water, { roughness: 0.25, metalness: 0.1 }), pond, 0, 0.055, 0);
+  water.castShadow = false;
+  var pad = add(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 8, 1, false, 0, 5.4), mat(C.grassDark), pond, 0.32, 0.092, -0.22);
+  add(new THREE.OctahedronGeometry(0.07, 0), mat(C.coral), pond, 0.32, 0.15, -0.22);
+  var ripples = [];
+  for (var r = 0; r < 2; r++) {
+    var ring = new THREE.Mesh(new THREE.RingGeometry(0.82, 0.9, 18),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide }));
+    ring.rotation.x = -PI / 2;
+    ring.position.set(-0.15, 0.084, 0.1);
+    pond.add(ring);
+    ripples.push(ring);
+  }
+  add(jitter(blob(0, 0.3, 0.22, 0.26), 0.05, 31), mat(C.rock), pond, -0.95, 0.12, 0.55);
+  add(jitter(blob(0, 0.2, 0.16, 0.2), 0.04, 33), mat(C.rockDark), pond, -0.6, 0.09, 0.95);
+
+  /* ---------- the otter ---------- */
+  var otter = group(world, 0, 0, 0.25);
+  var rig = group(otter); // hop, spin, squash
+  var fur = mat(C.fur), furDark = mat(C.furDark), cream = mat(C.cream), ink = mat(C.ink, { roughness: 0.45 });
+
+  var torso = group(rig);
+  add(blob(1, 0.7, 1.05, 0.62), fur, torso, 0, 1.2, 0);
+  add(blob(1, 0.5, 0.82, 0.4), cream, torso, 0, 1.22, 0.3);
+
+  var head = group(rig, 0, 2.42, 0.06);
+  add(blob(1, 0.6, 0.5, 0.54), fur, head);
+  add(blob(1, 0.44, 0.3, 0.3), cream, head, 0, -0.2, 0.3);
+  add(blob(1, 0.27, 0.19, 0.2), cream, head, 0, -0.1, 0.44);
+  add(blob(0, 0.1, 0.07, 0.07), ink, head, 0, -0.02, 0.63);
+  var smile = add(new THREE.TorusGeometry(0.06, 0.013, 4, 8, PI), ink, head, 0, -0.14, 0.615);
+  smile.rotation.z = PI; smile.castShadow = false;
+
+  var shine = mat(0xffffff, { roughness: 0.3 });
+  function makeEye(side) {
+    var g = group(head, side * 0.25, 0.1, 0.44);
+    var open = group(g);
+    add(new THREE.SphereGeometry(0.074, 8, 6), ink, open).castShadow = false;
+    add(new THREE.SphereGeometry(0.023, 6, 4), shine, open, 0.026, 0.03, 0.056).castShadow = false;
+    var happy = add(new THREE.TorusGeometry(0.075, 0.022, 4, 8, PI), ink, g, 0, -0.025, 0.035);
+    happy.castShadow = false; happy.visible = false;
+    return { open: open, happy: happy };
+  }
+  var eyes = [makeEye(-1), makeEye(1)];
+
+  [-1, 1].forEach(function (side) {
+    add(blob(0, 0.12, 0.12, 0.08), furDark, head, side * 0.5, 0.3, -0.02);          // ear
+    for (var w = 0; w < 3; w++) {                                                     // whiskers
+      var wg = group(head, side * 0.22, -0.1, 0.52);
+      var wgeo = new THREE.BoxGeometry(0.32, 0.012, 0.012);
+      wgeo.translate(0.16, 0, 0);
+      add(wgeo, cream, wg).castShadow = false;
+      wg.rotation.set(0, side > 0 ? 0.3 : PI - 0.3, (w - 1) * 0.24);
+    }
+    add(blob(1, 0.27, 0.3, 0.3), fur, rig, side * 0.36, 0.3, 0.04);                   // leg
+    add(blob(0, 0.2, 0.09, 0.3), furDark, rig, side * 0.4, 0.08, 0.32);               // foot
+  });
+
+  function makeArm(side) {
+    var g = group(rig, side * 0.6, 1.78, 0.1);
+    add(blob(1, 0.15, 0.4, 0.16), fur, g, 0, -0.33, 0);
+    add(blob(0, 0.12, 0.1, 0.13), furDark, g, 0, -0.7, 0.02);
+    g.userData.side = side;
+    return g;
+  }
+  var arms = [makeArm(-1), makeArm(1)];
+
+  var tail = [];
+  (function () {
+    var lens = [0.5, 0.5, 0.45, 0.4, 0.35], rad = [0.3, 0.25, 0.19, 0.13, 0.08, 0.03];
+    var parent = rig, y = 0;
+    for (var i = 0; i < lens.length; i++) {
+      var g = i === 0 ? group(rig, 0, 0.62, -0.42) : group(parent, 0, y, 0);
+      g.userData.baseX = i === 0 ? -PI / 2 - 0.5 : 0.2;
+      g.rotation.x = g.userData.baseX;
+      var geo = new THREE.CylinderGeometry(rad[i + 1], rad[i], lens[i], 6);
+      geo.translate(0, lens[i] / 2, 0);
+      add(geo, i < 3 ? fur : furDark, g);
+      tail.push(g);
+      parent = g; y = lens[i];
+    }
+  })();
+
+  // generous invisible target so taps land easily on a phone
+  var hitbox = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 3.1, 8),
+    new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false }));
+  hitbox.position.y = 1.5;
+  otter.add(hitbox);
+
+  /* ---------- props ---------- */
+  // Gym: a hex dumbbell
+  (function () {
+    var g = group(world, -1.45, 0.235, 1.95);
+    g.rotation.y = 0.55;
+    var bar = new THREE.CylinderGeometry(0.05, 0.05, 1.1, 6); bar.rotateZ(PI / 2);
+    add(bar, mat(0xcfd6db, { roughness: 0.35, metalness: 0.6 }), g);
+    [-1, 1].forEach(function (side) {
+      var big = new THREE.CylinderGeometry(0.27, 0.27, 0.16, 6); big.rotateZ(PI / 2);
+      add(big, mat(C.iron, { roughness: 0.6, metalness: 0.25 }), g, side * 0.36, 0, 0);
+      var small = new THREE.CylinderGeometry(0.21, 0.21, 0.1, 6); small.rotateZ(PI / 2);
+      add(small, mat(C.mango, { roughness: 0.6 }), g, side * 0.49, 0, 0);
+    });
+  })();
+
+  // Dinner: a ramen bowl with chopsticks, still steaming
+  var steam = [];
+  (function () {
+    var g = group(world, 1.55, 0, 1.5);
+    g.rotation.y = -0.45;
+    add(new THREE.BoxGeometry(1.05, 0.07, 0.74), mat(C.wood), g, 0, 0.035, 0);
+    add(new THREE.CylinderGeometry(0.4, 0.22, 0.3, 10), mat(C.indigo, { roughness: 0.5 }), g, 0, 0.22, 0);
+    add(new THREE.CylinderGeometry(0.415, 0.4, 0.05, 10), mat(C.cream, { roughness: 0.5 }), g, 0, 0.36, 0);
+    add(new THREE.CylinderGeometry(0.37, 0.37, 0.02, 10), mat(0xe8a54a, { roughness: 0.4 }), g, 0, 0.385, 0).castShadow = false;
+    var noodle = mat(0xf7e5a6);
+    [[-0.1, 0.02, 0.13], [0.05, -0.12, 0.11], [-0.02, 0.13, 0.09]].forEach(function (n) {
+      var t = new THREE.TorusGeometry(n[2], 0.028, 5, 9); t.rotateX(PI / 2);
+      add(t, noodle, g, n[0], 0.4, n[1]).castShadow = false;
+    });
+    add(new THREE.SphereGeometry(0.1, 7, 4, 0, PI * 2, 0, PI / 2), mat(0xfffaf0), g, 0.17, 0.39, 0.08);
+    add(new THREE.CylinderGeometry(0.05, 0.05, 0.02, 7), mat(C.sun), g, 0.17, 0.49, 0.08).castShadow = false;
+    var naruto = add(new THREE.CylinderGeometry(0.085, 0.085, 0.03, 8), mat(0xfffaf0), g, -0.2, 0.42, -0.1);
+    naruto.rotation.set(0.5, 0, 0.3);
+    add(new THREE.CylinderGeometry(0.035, 0.035, 0.034, 6), mat(C.coral), naruto);
+    for (var i = 0; i < 4; i++) {
+      add(new THREE.BoxGeometry(0.05, 0.02, 0.05), mat(C.grassDark), g, range(-0.2, 0.22), 0.405, range(-0.22, 0.02)).rotation.y = range(0, 3);
+    }
+    [-1, 1].forEach(function (side) {
+      var c = new THREE.CylinderGeometry(0.012, 0.02, 1.0, 5); c.rotateZ(PI / 2);
+      var m = add(c, mat(C.woodDark), g, 0.05, 0.415, 0.3 + side * 0.035);
+      m.rotation.y = 0.12 + side * 0.03;
+    });
+    for (var k = 0; k < 3; k++) {
+      var puff = new THREE.Mesh(blob(0, 0.07, 0.07, 0.07),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, transparent: true, opacity: 0.5, depthWrite: false, roughness: 1 }));
+      g.add(puff);
+      steam.push(puff);
+    }
+  })();
+
+  // Games: a controller parked on a rock
+  (function () {
+    var base = group(world, -2.5, 0, 0.35);
+    add(jitter(blob(1, 0.6, 0.3, 0.5), 0.06, 41), mat(C.rock), base, 0, 0.14, 0);
+    var g = group(base, -0.04, 0.56, 0.04);
+    g.rotation.order = 'YXZ';
+    g.rotation.set(0.5, -1.3, 0);
+    g.scale.setScalar(1.5);
+    var body = mat(C.bone, { roughness: 0.6 }), dark = mat(C.iron, { roughness: 0.6 });
+    add(new THREE.BoxGeometry(0.62, 0.12, 0.3), body, g);
+    [-1, 1].forEach(function (side) {
+      add(blob(1, 0.14, 0.1, 0.22), body, g, side * 0.27, -0.02, 0.14).rotation.y = side * -0.35;
+      add(new THREE.CylinderGeometry(0.045, 0.05, 0.05, 8), dark, g, side * 0.09, 0.08, 0.07);
+    });
+    add(new THREE.BoxGeometry(0.14, 0.03, 0.046), dark, g, -0.2, 0.07, -0.04);
+    add(new THREE.BoxGeometry(0.046, 0.03, 0.14), dark, g, -0.2, 0.07, -0.04);
+    [[0.05, 0, C.coral], [-0.05, 0, C.teal], [0, 0.05, C.mango], [0, -0.05, C.sun]].forEach(function (b) {
+      add(new THREE.CylinderGeometry(0.028, 0.028, 0.03, 6), mat(b[2], { roughness: 0.5 }), g, 0.2 + b[0], 0.07, -0.04 + b[1]);
+    });
+  })();
+
+  // Card packs: a foil booster and three pulls
+  function starShape(R, r2) {
+    var sh = new THREE.Shape();
+    for (var i = 0; i < 10; i++) {
+      var a = i / 10 * PI * 2 + PI / 2, rad = i % 2 ? r2 : R;
+      if (i) sh.lineTo(Math.cos(a) * rad, Math.sin(a) * rad); else sh.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
+    }
+    sh.closePath();
+    return sh;
+  }
+  (function () {
+    var g = group(world, 2.3, 0, 0.1);
+    g.rotation.y = -0.75;
+    g.scale.setScalar(1.2);
+    var art = [C.teal, C.mango, C.coral];
+    for (var i = 0; i < 3; i++) {
+      var c = group(g, (i - 1) * 0.2, 0.012 + i * 0.014, 0.28 - Math.abs(i - 1) * 0.04);
+      c.rotation.y = (1 - i) * 0.38;
+      add(new THREE.BoxGeometry(0.3, 0.012, 0.42), mat(C.cream, { roughness: 0.6 }), c);
+      add(new THREE.BoxGeometry(0.24, 0.014, 0.18), mat(art[i], { roughness: 0.5 }), c, 0, 0.002, -0.08).castShadow = false;
+      add(new THREE.BoxGeometry(0.2, 0.014, 0.03), mat(C.woodDark), c, 0, 0.002, 0.08).castShadow = false;
+      add(new THREE.BoxGeometry(0.14, 0.014, 0.03), mat(C.woodDark), c, -0.03, 0.002, 0.13).castShadow = false;
+    }
+    add(jitter(blob(0, 0.3, 0.28, 0.22), 0.05, 51), mat(C.rockDark), g, 0, 0.16, -0.52);
+    var pack = group(g, 0, 0, -0.22);
+    pack.rotation.x = -0.3;
+    var foil = mat(0x2aa9a2, { roughness: 0.3, metalness: 0.55 });
+    add(new THREE.BoxGeometry(0.36, 0.54, 0.06), foil, pack, 0, 0.27, 0);
+    add(new THREE.BoxGeometry(0.37, 0.05, 0.03), mat(0x8fe6dc, { roughness: 0.3, metalness: 0.5 }), pack, 0, 0.535, 0);
+    add(new THREE.BoxGeometry(0.37, 0.05, 0.03), mat(0x8fe6dc, { roughness: 0.3, metalness: 0.5 }), pack, 0, 0.012, 0);
+    var star = new THREE.ExtrudeGeometry(starShape(0.11, 0.048), { depth: 0.02, bevelEnabled: false });
+    add(star, mat(C.sun, { roughness: 0.4 }), pack, 0, 0.29, 0.03).castShadow = false;
+  })();
+
+  // The dream month: a signpost to everywhere
+  function label(text) {
+    var cv = document.createElement('canvas');
+    cv.width = 256; cv.height = 64;
+    var ctx = cv.getContext('2d');
+    var size = 46;
+    ctx.font = '900 ' + size + 'px "Arial Black", "Helvetica Neue", Arial, sans-serif';
+    var w = ctx.measureText(text).width;
+    if (w > 236) { size = Math.floor(size * 236 / w); ctx.font = '900 ' + size + 'px "Arial Black", "Helvetica Neue", Arial, sans-serif'; }
+    ctx.fillStyle = '#3a2317';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 128, 34);
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = 4;
+    return new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: 0.9 });
+  }
+  (function () {
+    var g = group(world, 1.75, 0, -1.85);
+    add(new THREE.CylinderGeometry(0.06, 0.08, 2.35, 6), mat(C.woodDark), g, 0, 1.17, 0);
+    add(jitter(blob(0, 0.24, 0.14, 0.24), 0.04, 61), mat(C.rock), g, 0, 0.06, 0);
+    var arrow = new THREE.Shape();
+    arrow.moveTo(-0.22, -0.14); arrow.lineTo(0.72, -0.14); arrow.lineTo(0.92, 0);
+    arrow.lineTo(0.72, 0.14); arrow.lineTo(-0.22, 0.14); arrow.closePath();
+    var boardGeo = new THREE.ExtrudeGeometry(arrow, { depth: 0.06, bevelEnabled: false });
+    boardGeo.translate(0, 0, -0.03);
+    var textGeo = new THREE.PlaneGeometry(0.7, 0.175);
+    [['JAPAN', 2.08, 0.5, C.mango], ['BALI', 1.76, PI - 0.35, C.cream], ['YOSEMITE', 1.44, -0.35, C.teal], ['PERU', 1.12, PI + 0.55, C.coral]]
+      .forEach(function (b) {
+        var bg = group(g, 0, b[1], 0);
+        bg.rotation.y = b[2];
+        var board = add(boardGeo, mat(b[3]), bg, 0, 0, 0.09);
+        var lm = label(b[0]);
+        var front = new THREE.Mesh(textGeo, lm); front.position.set(0.38, 0, 0.034); board.add(front);
+        var back = new THREE.Mesh(textGeo, lm); back.position.set(0.38, 0, -0.034); back.rotation.y = PI; board.add(back);
+      });
+  })();
+
+  /* ---------- greenery ---------- */
+  (function () {
+    var keepOut = [[0, 0.25, 1.15], [-1.6, -1.6, 1.4], [-1.45, 1.95, 0.8], [1.55, 1.5, 0.85], [-2.5, 0.35, 0.8], [2.35, 0.0, 0.8], [1.75, -1.85, 0.45]];
+    function spot() {
+      for (var tries = 0; tries < 40; tries++) {
+        var a = range(0, PI * 2), rr = Math.sqrt(rnd()) * 3.25, x = Math.cos(a) * rr, z = Math.sin(a) * rr, ok = true;
+        for (var i = 0; i < keepOut.length; i++) if (Math.hypot(x - keepOut[i][0], z - keepOut[i][1]) < keepOut[i][2]) { ok = false; break; }
+        if (ok) return [x, z];
+      }
+      return null;
+    }
+    var blade = new THREE.ConeGeometry(0.055, 0.26, 4);
+    for (var t = 0; t < 22; t++) {
+      var p = spot(); if (!p) continue;
+      for (var b = 0; b < 3; b++) {
+        var m = add(blade, mat(b === 1 ? C.grass : C.grassDark), world, p[0] + range(-0.08, 0.08), 0.12, p[1] + range(-0.08, 0.08));
+        m.rotation.set(range(-0.25, 0.25), range(0, 3), range(-0.25, 0.25));
+        m.scale.setScalar(range(0.8, 1.3));
+        m.castShadow = false;
+      }
+    }
+    var petals = [C.coral, C.sun, 0xfff3dd];
+    for (var f = 0; f < 7; f++) {
+      var q = spot(); if (!q) continue;
+      add(new THREE.CylinderGeometry(0.012, 0.012, 0.18, 4), mat(C.grassDark), world, q[0], 0.09, q[1]).castShadow = false;
+      add(new THREE.OctahedronGeometry(0.06, 0), mat(petals[f % 3]), world, q[0], 0.21, q[1]);
+    }
+    add(jitter(blob(1, 0.42, 0.34, 0.4), 0.07, 71), mat(C.grassDark), world, 0.2, 0.22, -2.75);
+    add(jitter(blob(1, 0.3, 0.26, 0.3), 0.06, 73), mat(C.grass), world, 0.72, 0.17, -2.6);
+    add(jitter(blob(0, 0.32, 0.22, 0.28), 0.05, 75), mat(C.rock), world, -2.9, 0.12, -0.75);
+    add(jitter(blob(0, 0.22, 0.16, 0.2), 0.05, 77), mat(C.rockDark), world, 2.75, 0.1, 1.35);
+  })();
+
+  /* ---------- clouds far below ---------- */
+  var clouds = group(scene);
+  (function () {
+    var cm = new THREE.MeshStandardMaterial({ color: 0xffeeda, flatShading: true, roughness: 1 });
+    for (var i = 0; i < 5; i++) {
+      var a = i / 5 * PI * 2 + range(-0.4, 0.4), rr = range(6.5, 10), cg = group(clouds, Math.cos(a) * rr, range(-3.4, -1.8), Math.sin(a) * rr);
+      var n = 3 + (i % 2);
+      for (var j = 0; j < n; j++) {
+        var sz = range(0.55, 1.0);
+        var m = new THREE.Mesh(blob(1, sz * 1.25, sz * 0.62, sz), cm);
+        m.position.set((j - (n - 1) / 2) * 0.85, range(-0.12, 0.2), range(-0.25, 0.25));
+        cg.add(m);
+      }
+      cg.rotation.y = -a;
+    }
+  })();
+
+  /* ---------- celebration particles ---------- */
+  var heart = new THREE.Shape();
+  heart.moveTo(0, -0.5);
+  heart.bezierCurveTo(-0.95, 0.05, -0.5, 0.78, 0, 0.3);
+  heart.bezierCurveTo(0.5, 0.78, 0.95, 0.05, 0, -0.5);
+  var heartGeo = new THREE.ExtrudeGeometry(heart, { depth: 0.22, bevelEnabled: false, curveSegments: 5 });
+  heartGeo.center();
+  var starGeo = new THREE.ExtrudeGeometry(starShape(0.55, 0.24), { depth: 0.2, bevelEnabled: false });
+  starGeo.center();
+  var sparkMats = [C.coral, C.sun, C.mango, 0xfff3dd].map(function (c) {
+    return new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.35, flatShading: true, roughness: 0.6 });
+  });
+  var sparks = [];
+  function burst() {
+    for (var i = 0; i < 16; i++) {
+      var m = null;
+      for (var j = 0; j < sparks.length; j++) if (!sparks[j].visible) { m = sparks[j]; break; }
+      if (!m) {
+        if (sparks.length >= 48) break;
+        m = new THREE.Mesh(heartGeo, sparkMats[0]);
+        world.add(m); sparks.push(m);
+      }
+      m.geometry = i % 3 === 2 ? starGeo : heartGeo;
+      m.material = sparkMats[(Math.random() * sparkMats.length) | 0];
+      m.visible = true;
+      m.position.set(otter.position.x + (Math.random() - 0.5) * 0.7, 2.5 + Math.random() * 0.6, otter.position.z + (Math.random() - 0.5) * 0.7);
+      var a = Math.random() * PI * 2, sp = 0.6 + Math.random() * 1.5;
+      m.userData = { vx: Math.cos(a) * sp, vy: 2.4 + Math.random() * 2.2, vz: Math.sin(a) * sp, life: 0, max: 0.9 + Math.random() * 0.6, size: 0.16 + Math.random() * 0.14, spin: (Math.random() - 0.5) * 8 };
+      m.rotation.set(0, Math.random() * PI * 2, (Math.random() - 0.5) * 0.6);
+      m.scale.setScalar(0.001);
+    }
+  }
+
+  /* ---------- camera controls ---------- */
+  var controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.set(0, 0.55, 0);
+  controls.enablePan = false;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.rotateSpeed = 0.8;
+  controls.zoomSpeed = 0.8;
+  controls.minDistance = 5.5;
+  controls.maxDistance = 19;
+  controls.minPolarAngle = 0.45;
+  controls.maxPolarAngle = 1.6;
+  controls.autoRotate = !reduceMotion;
+  controls.autoRotateSpeed = 0.9;
+  var resumeTimer = 0;
+  controls.addEventListener('start', function () {
+    controls.autoRotate = false;
+    clearTimeout(resumeTimer);
+    hint.classList.add('used');
+  });
+  controls.addEventListener('end', function () {
+    clearTimeout(resumeTimer);
+    if (!reduceMotion) resumeTimer = setTimeout(function () { controls.autoRotate = true; }, 2200);
+  });
+
+  /* ---------- tap / click the otter ---------- */
+  var raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  function overOtter(ev) {
+    var rect = canvas.getBoundingClientRect();
+    ndc.set((ev.clientX - rect.left) / rect.width * 2 - 1, -((ev.clientY - rect.top) / rect.height) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    return raycaster.intersectObject(hitbox, false).length > 0;
+  }
+  var CHEER = 1.5, cheerT = -1, down = null;
+  function cheer() {
+    if (cheerT >= 0 && cheerT < 0.35) return;
+    cheerT = 0;
+    burst();
+    hint.classList.add('used');
+  }
+  canvas.addEventListener('pointerdown', function (ev) { down = { x: ev.clientX, y: ev.clientY, t: performance.now() }; });
+  canvas.addEventListener('pointerup', function (ev) {
+    if (!down) return;
+    var moved = Math.hypot(ev.clientX - down.x, ev.clientY - down.y), held = performance.now() - down.t;
+    down = null;
+    if (moved < 9 && held < 600 && overOtter(ev)) cheer();
+  });
+  canvas.addEventListener('pointercancel', function () { down = null; });
+  canvas.addEventListener('pointermove', function (ev) {
+    if (ev.pointerType !== 'mouse' || ev.buttons) return;
+    canvas.classList.toggle('over', overOtter(ev));
+  });
+  window.addEventListener('keydown', function (ev) { if (ev.key === 'Tab') document.body.classList.add('kbd'); });
+  window.addEventListener('pointerdown', function () { document.body.classList.remove('kbd'); }, true);
+  canvas.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); cheer(); }
+  });
+
+  /* ---------- sizing ---------- */
+  function resize() {
+    var w = stage.clientWidth || window.innerWidth, h = stage.clientHeight || window.innerHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    var aspect = w / h, base = 38;
+    camera.aspect = aspect;
+    // keep the island's full width in view on tall screens
+    camera.fov = aspect >= 1 ? base : Math.min(80, 2 * Math.atan(Math.tan(base * PI / 360) / aspect) * 180 / PI);
+    var cr = card.getBoundingClientRect();
+    if (cr.width > w * 0.7) camera.setViewOffset(w, h, 0, Math.round(cr.height * 0.5), w, h);       // card is a bottom strip: lift the scene
+    else if (cr.right > w * 0.36) camera.setViewOffset(w, h, -Math.round(cr.right * 0.3), 0, w, h);  // card crowds the left: nudge right
+    else camera.clearViewOffset();
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
+  resize();
+
+  /* ---------- animation ---------- */
+  var clock = new THREE.Clock(), t = 0, nextBlink = 2.2, blinkT = -1;
+  function ease(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+
+  function frame() {
+    requestAnimationFrame(frame);
+    var dt = Math.min(clock.getDelta(), 0.05);
+    t += dt;
+
+    // island drift
+    if (!reduceMotion) {
+      world.position.y = Math.sin(t * 0.8) * 0.07;
+      world.rotation.z = Math.sin(t * 0.5) * 0.008;
+      clouds.rotation.y = t * 0.012;
+    }
+    for (var i = 0; i < shards.length; i++) {
+      var u = shards[i].userData, a = u.a + (reduceMotion ? 0 : t * 0.05 * u.sp);
+      shards[i].position.set(Math.cos(a) * u.r, u.y + Math.sin(t * u.sp + u.ph) * 0.12, Math.sin(a) * u.r);
+      shards[i].rotation.set(t * 0.2 * u.sp, t * 0.3 * u.sp, 0);
+    }
+
+    // celebration
+    var hop = 0, spin = 0, up = 0, squash = 0, wag = 1;
+    if (cheerT >= 0) {
+      cheerT += dt;
+      var p = cheerT / CHEER;
+      if (p >= 1) cheerT = -1;
+      else {
+        hop = Math.abs(Math.sin(p * PI * 2)) * 0.8 * (1 - 0.35 * p);
+        spin = ease(p) * PI * 2;
+        up = Math.sqrt(Math.sin(Math.min(1, p * 1.1) * PI));
+        squash = Math.sin(p * PI * 4) * 0.07;
+        wag = 3.2;
+      }
+    }
+    var happy = cheerT >= 0;
+    rig.position.y = hop;
+    rig.rotation.y = spin;
+    rig.scale.set(1 - squash * 0.5, 1 + squash, 1 - squash * 0.5);
+
+    // breathing and a slow look-around
+    var breath = Math.sin(t * 1.9);
+    torso.scale.set(1 + breath * 0.022, 1, 1 + breath * 0.03);
+    head.position.y = 2.42 + breath * 0.018;
+    head.rotation.set(-0.22 * up, Math.sin(t * 0.45) * 0.2 * (1 - up), Math.sin(t * 0.7) * 0.05);
+
+    // arms rest on the belly, then go up
+    for (var k = 0; k < 2; k++) {
+      var arm = arms[k], sd = arm.userData.side;
+      arm.rotation.x = -0.75 + up * 0.6 + breath * 0.02;
+      arm.rotation.z = sd * (-0.3 + up * 2.75 + (happy ? Math.sin(t * 20) * 0.14 * up : 0));
+    }
+
+    // tail sway
+    for (var j = 0; j < tail.length; j++) {
+      tail[j].rotation.x = tail[j].userData.baseX;
+      tail[j].rotation.z = Math.sin(t * 2.3 * (wag > 1 ? 2.6 : 1) - j * 0.65) * 0.1 * wag * (j ? 1 : 0.6);
+    }
+
+    // blink, or squint with joy
+    if (!happy) {
+      if (blinkT < 0 && t > nextBlink) blinkT = 0;
+      if (blinkT >= 0) { blinkT += dt; if (blinkT > 0.14) { blinkT = -1; nextBlink = t + 1.8 + Math.random() * 3.2; } }
+    } else blinkT = -1;
+    var lid = blinkT >= 0 ? 0.12 : 1;
+    for (var e = 0; e < 2; e++) {
+      eyes[e].open.visible = !happy;
+      eyes[e].happy.visible = happy;
+      eyes[e].open.scale.y = lid;
+    }
+
+    // pond, lily pad, steam
+    for (var r2 = 0; r2 < ripples.length; r2++) {
+      var rp = (t * 0.28 + r2 * 0.5) % 1;
+      ripples[r2].scale.setScalar(0.15 + rp * 0.8);
+      ripples[r2].material.opacity = 0.5 * (1 - rp);
+    }
+    pad.rotation.y = Math.sin(t * 0.4) * 0.3;
+    for (var s2 = 0; s2 < steam.length; s2++) {
+      var sp2 = (t * 0.32 + s2 / steam.length) % 1;
+      steam[s2].position.set(Math.sin(sp2 * 6 + s2 * 2) * 0.08, 0.5 + sp2 * 0.95, Math.cos(sp2 * 5 + s2) * 0.06);
+      steam[s2].scale.setScalar(0.7 + sp2 * 1.1);
+      steam[s2].material.opacity = 0.5 * Math.sin(sp2 * PI);
+    }
+
+    // hearts and stars
+    for (var n = 0; n < sparks.length; n++) {
+      var m = sparks[n];
+      if (!m.visible) continue;
+      var d = m.userData;
+      d.life += dt;
+      if (d.life >= d.max) { m.visible = false; continue; }
+      d.vy -= 4.6 * dt;
+      m.position.x += d.vx * dt; m.position.y += d.vy * dt; m.position.z += d.vz * dt;
+      m.rotation.y += d.spin * dt;
+      m.scale.setScalar(d.size * Math.pow(Math.sin(d.life / d.max * PI), 0.6));
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { contact } from './content';
 import Home from './pages/Home';
 import Work from './pages/Work';
+import ExperienceDetail from './pages/ExperienceDetail';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import About from './pages/About';
@@ -25,6 +26,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="work" element={<Work />} />
+          <Route path="work/:slug" element={<ExperienceDetail />} />
           <Route path="experience" element={<Navigate to="/work" replace />} />
           <Route path="projects" element={<Projects />} />
           <Route path="projects/:slug" element={<ProjectDetail />} />

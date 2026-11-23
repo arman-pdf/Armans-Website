@@ -23,18 +23,20 @@ export default function Nav() {
         <Link to="/" className="font-display font-bold text-lg tracking-[-0.01em] text-ink">
           {profile.name}
         </Link>
-        <nav className="hidden md:flex gap-9" aria-label="Primary">
-          {links.map((l) => <NavLink key={l.to} to={l.to} className={cls}>{l.label}</NavLink>)}
-        </nav>
-        <button
-          type="button"
-          className="md:hidden text-sm font-medium text-ink"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? 'Close' : 'Menu'}
-        </button>
+        <div className="flex items-center gap-4 md:gap-9">
+          <nav className="hidden md:flex gap-9" aria-label="Primary">
+            {links.map((l) => <NavLink key={l.to} to={l.to} className={cls}>{l.label}</NavLink>)}
+          </nav>
+          <button
+            type="button"
+            className="md:hidden text-sm font-medium text-ink"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? 'Close' : 'Menu'}
+          </button>
+        </div>
       </div>
       {open && (
         <nav id="mobile-nav" aria-label="Primary" className="md:hidden border-t border-rule bg-paper px-5 py-5 flex flex-col gap-5">

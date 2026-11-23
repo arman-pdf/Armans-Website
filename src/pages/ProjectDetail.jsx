@@ -48,14 +48,18 @@ export default function ProjectDetail() {
             <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Overview</h2>
             <p className="text-lg leading-[1.7] max-w-[68ch]">{p.overview}</p>
           </section>
-          <section>
-            <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">What I did</h2>
-            <div className="max-w-[68ch]"><Bullets items={p.did} /></div>
-          </section>
-          <section>
-            <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Outcomes</h2>
-            <div className="max-w-[68ch]"><Bullets items={p.outcomes} /></div>
-          </section>
+          {p.did.length > 0 && (
+            <section>
+              <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">What I did</h2>
+              <div className="max-w-[68ch]"><Bullets items={p.did} /></div>
+            </section>
+          )}
+          {p.outcomes.length > 0 && (
+            <section>
+              <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Outcomes</h2>
+              <div className="max-w-[68ch]"><Bullets items={p.outcomes} /></div>
+            </section>
+          )}
           {links && (
             <section>
               <h2 className="font-display font-extrabold text-3xl tracking-[-0.03em] mb-4">Files and code</h2>

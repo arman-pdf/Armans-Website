@@ -21,6 +21,31 @@
 
 ---
 
+## After graduation · 2025–26
+
+### 16. ⭐ Scope 1 & 2 GHG Inventory: Kitchener and Hamilton Municipal Buildings
+- **slug:** `ghg-inventory-kitchener-hamilton`
+- **tagline:** I recalculated three years of building emissions for two Ontario cities from their own published energy data. Electricity use barely moved, but Scope 2 roughly doubled.
+- **when / context:** Fall 2026 · independent project
+- **role:** Sole author
+- **tags:** GHG Accounting
+- **tools & methods:** Excel, GHG Protocol Corporate Standard (operational control), GHG Protocol Scope 2 Guidance (location-based and market-based), ECCC Emission Factors and Reference Values, IPCC AR5 GWPs, City of Kitchener O. Reg. 25/23 facility tables, City of Hamilton Annual Energy Reports
+- **card_summary:** An Excel Scope 1 and 2 inventory of Kitchener's and Hamilton's municipal buildings for 2022 to 2024, checked against what each city reported.
+- **overview:** I've lived in Kitchener and I plan to work in Ontario, so I picked two Ontario cities whose numbers I could actually check: Kitchener and Hamilton. Both publish how much electricity and natural gas their buildings use each year. I took those figures for 2022, 2023 and 2024, recalculated Scope 1 (natural gas burned in buildings) and Scope 2 (grid electricity) with Environment and Climate Change Canada emission factors, and compared my totals with what each city reported. The main focus is Scope 2. This is my own recalculation from public data, so it isn't an official inventory and neither city asked for it.
+- **what_i_did:**
+  - Set the boundary using operational control: 84 to 86 Kitchener buildings and pumping stations each year, and Hamilton's 16 to 20 portfolio categories, since Hamilton only publishes category totals.
+  - Typed every input in from the reports with page references, and kept every emission factor on one sheet so changing a value updates the whole workbook.
+  - Converted Kitchener's natural gas from therms back to cubic metres. My 2023 total came within 0.001% of the 2,722,681 m³ the City states in its energy plan.
+  - Calculated Scope 2 both location-based and market-based. I went through both cities' reports for clean energy credits, green power contracts, on-site solar and biogas, and found nothing either city could claim, so the market-based result equals the location-based one.
+  - Split the change in Scope 2 into how much came from the buildings using more electricity and how much came from the grid itself.
+  - Logged 15 data problems and how I handled each, including a gap of about 400 t inside one of Hamilton's 2024 tables.
+- **outcomes:**
+  - From 2022 to 2024, electricity use rose only about 3% in both cities, but location-based Scope 2 roughly doubled: from 1,091 to 2,168 tCO2e in Kitchener and from 7,649 to 15,103 tCO2e in Hamilton.
+  - About 97% of that increase came from Ontario's grid getting more carbon-intensive (38 to 73 g CO2e/kWh), not from the buildings.
+  - Kitchener's own reports show its building emissions falling 9% over those years, while my recalculation shows them rising 3%. The difference comes from the electricity factor: Kitchener's figures imply about 28 g/kWh for 2022 and 2023, and Hamilton's factors lag by about two years.
+  - Scope 2 went from about 16% to 30% of Kitchener's building emissions, and from 20% to 34% of Hamilton's.
+  - A lagged factor isn't wrong, but while Ontario's grid keeps getting dirtier it understates current Scope 2, so the factor year should be disclosed.
+
 ## Year 5 · 2024–25
 
 ### 1. ⭐ Mapping Groundwater Vulnerability Across Alberta
@@ -198,7 +223,7 @@
   - Monitoring how contaminants of concern migrate into the right-of-way.
   - Centralising well and contamination data for future decisions.
 - **related co-op work to mention:** a database of 22 monitoring locations with automated exceedance flags, review of more than 50 monitoring reports, and a GIS framework for more than 150 wells across the city.
-- **assets:** `Year 3 (2022-23)/02 Technical Report - GIS Groundwater Contamination Monitoring Toronto/Arman Kanorwalla Final draft.docx` (text only, so use a stock or map graphic for the card)
+- **assets:** `Year 3 (2022-23)/02 Technical Report - GIS Groundwater Contamination Monitoring Toronto/Arman Kanorwalla Final draft.docx` (hero and thumb are Figure 3, the sample three-year contaminant chart, with the well number cropped off the title)
 
 ### 10. ⭐ Microbes vs Pollution: Four Geomicrobiology Experiments
 - **slug:** `geomicrobiology-remediation`

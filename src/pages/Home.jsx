@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import TerrainFigure from '../components/TerrainFigure';
 import Assistant from '../components/Assistant';
+import ResumeLink from '../components/ResumeLink';
 import { profile, experiences, projects } from '../content';
 
 const [first, ...rest] = profile.name.split(' ');
@@ -11,7 +12,7 @@ function Arrow() {
 }
 
 export default function Home() {
-  const featured = projects.filter((p) => p.featured).slice(0, 5);
+  const featured = projects.filter((p) => p.featured).slice(0, 6);
 
   return (
     <>
@@ -25,12 +26,13 @@ export default function Home() {
             <p className="mt-6 text-lg text-paper/90 max-w-[52ch]">{profile.tagline}</p>
             <p className="mt-6 flex items-start gap-2 text-sm text-paper/70">
               <span aria-hidden className="mt-[9px] inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-flag" />
-              {profile.status} · {profile.location} · {profile.relocation}
+              {profile.status} · Based in {profile.location} · {profile.relocation}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
               <Link to="/projects" className="bg-flag text-deep font-semibold px-7 py-3 hover:bg-paper transition-colors">
                 See projects
               </Link>
+              <ResumeLink variant="button">One-page resume</ResumeLink>
               <Link to="/contact" className="font-medium underline decoration-flag decoration-2 underline-offset-8 hover:text-flag">
                 Get in touch
               </Link>
@@ -50,8 +52,8 @@ export default function Home() {
         </div>
         <ul>
           {experiences.slice(0, 3).map((e) => (
-            <li key={e.id} className="border-t border-rule last:border-b">
-              <Link to="/work" className="group grid md:grid-cols-12 gap-x-8 gap-y-1 py-6 items-baseline">
+            <li key={e.slug} className="border-t border-rule last:border-b">
+              <Link to={`/work/${e.slug}`} className="group grid md:grid-cols-12 gap-x-8 gap-y-1 py-6 items-baseline">
                 <span className="md:col-span-5 font-display font-bold text-xl md:text-2xl tracking-[-0.02em] group-hover:text-flag-ink transition-colors">{e.role}</span>
                 <span className="md:col-span-4 text-ink-2">{e.company}</span>
                 <span className="md:col-span-3 text-sm text-ink-3 tnum md:text-right">{e.period}</span>

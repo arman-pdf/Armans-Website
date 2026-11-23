@@ -33,7 +33,8 @@ __pycache__/
 
 # Raw course files contain student IDs: never commit
 projects_selected.zip
-projects/
+# Only the raw folder at the top level. public/projects/ holds the cleaned images the site needs.
+/projects/
 *.zip
 
 # Local secrets (API keys): never commit
@@ -45,6 +46,7 @@ functions/_knowledge.js
 # Documents (reports, posters, notebooks) can contain student ID numbers: never commit by accident.
 # To publish ONE cleaned file, add an exception line, e.g.  !public/projects/ore-chimney-ni-43-101/report.pdf
 *.pdf
+!public/resume/Arman-Kanorwalla-Resume.pdf
 *.doc
 *.docx
 *.pptx
@@ -56,3 +58,8 @@ functions/_knowledge.js
 website folder
 website folder ak/
 .playwright-mcp/
+
+# Local-only files
+.claude/
+Otter Island.html
+*.bak

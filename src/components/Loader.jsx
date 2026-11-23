@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import posterUrl from '../assets/terrain.svg?url';
 import meta from '../assets/terrain.json';
 
-// Plays on every fresh load of the home page. Deep links (e.g. a project page from a résumé)
+// Plays on every fresh load of the home page. Deep links (e.g. a project page from a resume)
 // and in-site navigation never see it; reduced-motion users skip it.
 const shouldSkip = () =>
   window.location.pathname !== '/' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;

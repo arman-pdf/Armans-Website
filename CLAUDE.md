@@ -32,7 +32,7 @@ Node must be >= 22.23.4 (October 2026 security release). Restart `npm run dev` a
 src/
   content.js            all site copy (profile, bio, skills, experience, education, projectLinks)
   projects.json         GENERATED from PORTFOLIO_PROJECTS.md: edit the markdown, re-run the importer
-  pages/                Home, Work, Projects, ProjectDetail, About, Contact
+  pages/                Home, Work, ExperienceDetail (/work/<slug>), Projects, ProjectDetail, About, Contact
   components/           Nav, Footer, Layout, Loader, DepthGauge, TerrainFigure/Canvas, Assistant,
                         ContactForm, ProjectImage, ContourTile, Entry, PageHeader, ErrorBoundary
   lib/askStream.js      client for /api/chat (streams text)
@@ -78,4 +78,4 @@ Use the Playwright MCP tools for UI work: navigate to http://localhost:3000, tak
 - Real Ollama key + model choice (`OLLAMA_MODEL`), Turnstile keys, rate-limit binding at deploy time
 - Contact destination (`CONTACT_WEBHOOK_URL`, e.g. n8n) is undecided
 - Deploy to Cloudflare Pages (secrets: GROQ_API_KEY; later TURNSTILE_SECRET)
-- Résumé PDF, headshot, per-project GitHub links (`projectLinks` in content.js)
+- Per-project GitHub links (`projectLinks` in content.js). The resume PDF lives at `public/resume/Arman-Kanorwalla-Resume.pdf`: replace the file, keep the name

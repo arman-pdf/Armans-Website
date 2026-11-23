@@ -16,7 +16,7 @@ let cur = null;
 let key = null;
 
 for (const raw of lines) {
-  const y = raw.match(/^## (Year \d) · (\d{4})–(\d{2,4})/);
+  const y = raw.match(/^## (.+?) · (\d{4})–(\d{2,4})/); // e.g. 'Year 5 · 2024–25' or 'After graduation · 2026–27'
   if (y) { year = { group: y[1], label: `${y[2]}–${y[3].slice(-2)}` }; continue; }
 
   const h = raw.match(/^### (\d+)\.\s+(⭐\s+)?(.+)$/);
